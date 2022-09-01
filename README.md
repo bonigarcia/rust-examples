@@ -6,10 +6,10 @@
 This repository contains several example programs written in Rust. These examples are used as warm up for the upcoming [Selenium] Manager.
 
 ## Selenium Manager
-To ease the adoption of browser automation with Selenium WebDriver, we propose the implementation of an official driver/browser manager in the Selenium project. A possible name for this project of the Selenium portfolio is Selenium Manager. This tool implements the concept of batteries included. In other words, it allows managing the required browser and driver infrastructure for Selenium WebDriver in an automated fashion, allowing a more pleasant user experience for Selenium users, especially for firstcomers.
+Selenium Manager is a Command Line Interface (CLI) tool developed within the [Selenium] project. This tool implements the concept of batteries included. In other words, it allows managing the required browser and driver infrastructure for Selenium WebDriver in an automated fashion, allowing a more pleasant user experience for Selenium users, especially for firstcomers.
 
 ## About
-rust-examples (Copyright &copy; 2022) is a personal project of [Boni García] licensed under [Apache 2.0 License].
+rust-examples (Copyright &copy; 2022) is a project created by [Boni García], licensed under [Apache 2.0 License].
 
 [Apache 2.0 License]: https://www.apache.org/licenses/LICENSE-2.0
 [Boni García]: https://bonigarcia.dev/
