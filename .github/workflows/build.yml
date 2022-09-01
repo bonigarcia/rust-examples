@@ -1,0 +1,19 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout GitHub repo
+      uses: actions/checkout@v2
+    - name: Run tests
+      command: cargo test
