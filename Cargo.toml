@@ -1,2 +1,2 @@
 [workspace]
-members=["hello_world", "os_arch"]
+members=["hello_world", "os_arch", "basic_sum"]
