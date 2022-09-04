@@ -10,7 +10,12 @@ fn my_sum(x: i32, y: i32) -> i32 {
     x + y
 }
 
-#[test]
-fn test_sum() {
-    assert_eq!(5, my_sum(2, 3));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sum() {
+        assert_eq!(5, my_sum(2, 3));
+    }
 }
