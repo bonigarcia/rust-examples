@@ -20,12 +20,8 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         toolchain: ${{ matrix.rust }}
-    - name: Build programs
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release --all-features
-    - name: Run tests
+    - name: Build and test
       uses: actions-rs/cargo@v1
       with:
         command: test
+        args: --release --all-features
