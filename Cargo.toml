@@ -1,2 +1,2 @@
 [workspace]
-members=["hello_world", "os_arch", "basic_sum", "clap_cli", "dirs", "references", "clap_verbosity"]
+members=["hello_world", "os_arch", "basic_sum", "clap_cli", "dirs", "references", "clap_verbosity", "clap_derive"]
