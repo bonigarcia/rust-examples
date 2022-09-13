@@ -1,5 +1,6 @@
 use std::process::exit;
 use clap::{arg, Command};
+use exitcode;
 
 fn main() {
     let matches = Command::new("Selenium Manager")
@@ -10,9 +11,9 @@ fn main() {
 
     if let Some(browser) = matches.get_one::<String>("browser") {
         println!("OK\t/path/to/{}driver", browser);
-        exit(0);
+        exit(exitcode::OK);
     } else {
         eprintln!("ERROR\tNo browser specified");
-        exit(1);
+        exit(exitcode::DATAERR);
     }
 }
