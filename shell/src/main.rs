@@ -8,7 +8,7 @@ fn main() {
     };
     let args = match OS {
         "windows" => ["/C", r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#],
-        "macos" => ["-c", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version"],
+        "macos" => ["-c", r#"'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
         _ => ["-c", "google-chrome --version"],
     };
 
