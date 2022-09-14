@@ -16,5 +16,5 @@ fn test_shell() {
 
     println!("--> OUTPUT: {}", output);
 
-    assert!(output.contains("Cargo.toml"));
+    assert!(output.contains("105"));
 }
