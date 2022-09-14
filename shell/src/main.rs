@@ -1,6 +1,6 @@
 use std::env::consts::OS;
+use std::os::windows::process::CommandExt;
 use std::process::Command;
-
 
 fn main() {
     let command = match OS {
@@ -8,12 +8,13 @@ fn main() {
         _ => "sh"
     };
     let args = match OS {
-        "windows" => ["/C", "dir /a"],
-        _ => ["-c", "ls -l"]
+        "windows" => r#"cmd.exe /C wmic datafile where name="%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe" get Version /value"#,
+        "mac" => "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --version",
+        _ => "google-chrome --version",
     };
 
     let output = Command::new(command)
-        .args(args)
+        .raw_arg(args)
         .output()
         .expect("command failed to start");
 
