@@ -10,5 +10,6 @@ members = [
     "clap_derive",
     "confy",
     "hyper",
-    "reqwest"
+    "reqwest",
+    "shell"
 ]
