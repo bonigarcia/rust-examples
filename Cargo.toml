@@ -1,2 +1,14 @@
 [workspace]
-members = ["hello_world", "os_arch", "basic_sum", "clap_cli", "dirs", "references", "clap_verbosity", "clap_derive", "confy", "hyper"]
+members = [
+    "hello_world",
+    "os_arch",
+    "basic_sum",
+    "clap_cli",
+    "dirs",
+    "references",
+    "clap_verbosity",
+    "clap_derive",
+    "confy",
+    "hyper",
+    "reqwest"
+]
