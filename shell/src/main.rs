@@ -1,5 +1,6 @@
 use std::env::consts::OS;
 use std::process::Command;
+use regex::Regex;
 
 fn main() {
     let command = match OS {
@@ -17,9 +18,14 @@ fn main() {
         .output()
         .expect("command failed to start");
 
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let re = Regex::new(r"[^\d^\.]").unwrap();
+    let browser_version = re.replace_all(&*stdout, "");
+
     println!("status: {}", output.status);
-    println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+    println!("stdout: {}", stdout);
     println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+    println!("browser_version: {}", browser_version);
 
     assert!(output.status.success());
 }
