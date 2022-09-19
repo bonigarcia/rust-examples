@@ -11,5 +11,6 @@ members = [
     "confy",
     "hyper",
     "reqwest",
-    "shell"
+    "shell",
+    "download"
 ]
