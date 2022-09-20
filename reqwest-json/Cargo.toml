@@ -1,10 +1,10 @@
 [package]
-name = "reqwest"
+name = "reqwest-json"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = "0.11.11"
+reqwest = { version = "0.11.11", features = ["json"] }
 tokio = { version = "1.21.1", features = ["full"] }
