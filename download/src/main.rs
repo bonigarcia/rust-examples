@@ -20,6 +20,7 @@ error_chain! {
 async fn main() -> Result<()> {
     //let tmp_dir = Builder::new().prefix("example").tempdir()?;
     let url = "https://chromedriver.storage.googleapis.com/106.0.5249.21/chromedriver_linux64.zip";
+    //let url = "https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/105.0.1343.34/edgedriver_arm64.zip";
     let response = reqwest::get(url).await?;
     let target;
     let mut dest = {
@@ -54,23 +55,11 @@ fn unzip(zip_file: String) {
             Some(path) => path.to_owned(),
             None => continue,
         };
-
-        {
-            let comment = file.comment();
-            if !comment.is_empty() {
-                println!("File {} comment: {}", i, comment);
-            }
-        }
-
-        if (*file.name()).ends_with('/') {
+        if (file.name()).ends_with('/') {
             println!("File {} extracted to \"{}\"", i, out_path.display());
             fs::create_dir_all(&out_path).unwrap();
         } else {
-            println!(
-                "File {} extracted to \"{}\" ({} bytes)",
-                i,
-                out_path.display(),
-                file.size()
+            println!("File {} extracted to \"{}\" ({} bytes)", i, out_path.display(), file.size()
             );
             if let Some(p) = out_path.parent() {
                 if !p.exists() {
@@ -87,7 +76,7 @@ fn unzip(zip_file: String) {
             use std::os::unix::fs::PermissionsExt;
 
             if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).unwrap();
+                fs::set_permissions(&out_path, fs::Permissions::from_mode(mode)).unwrap();
             }
         }
     }
