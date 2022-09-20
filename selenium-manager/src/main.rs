@@ -16,6 +16,9 @@ use regex::Regex;
 use tempfile::Builder;
 use zip::ZipArchive;
 
+static CHROMEDRIVER: &str = "chromedriver";
+static CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
+
 /// Selenium-Manager prototype
 #[derive(Parser, Debug)]
 #[clap(version, about, long_about = None)]
@@ -118,11 +121,11 @@ fn get_browser_version() -> String {
 #[tokio::main]
 async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
     let url = match OS {
-        "windows" => format!("https://chromedriver.storage.googleapis.com/{}/chromedriver_win32.zip", driver_version),
-        "macos" => format!("https://chromedriver.storage.googleapis.com/{}/chromedriver_mac64.zip", driver_version),
-        _ => format!("https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip", driver_version),
+        "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
+        "macos" => format!("{}{}/{}_mac64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
+        _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
     };
-    log::debug!("Downloading chromedriver {} from {}", driver_version, url);
+    log::debug!("Downloading {} {} from {}", CHROMEDRIVER, driver_version, url);
 
     let tmp_dir = Builder::new().prefix("example").tempdir()?;
     let response = reqwest::get(url).await?;
@@ -186,7 +189,7 @@ fn unzip(zip_file: String) {
 
 #[tokio::main]
 async fn get_chromedriver_version(chrome_version: &String) -> Result<String, Box<dyn Error>> {
-    let chromedriver_url = format!("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{}", chrome_version);
+    let chromedriver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, chrome_version);
     let chromedriver_version = reqwest::get(chromedriver_url)
         .await?.text().await?;
 
