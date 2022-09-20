@@ -1,22 +1,16 @@
+use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::io;
 use std::io::copy;
 use std::io::Cursor;
 
-use error_chain::error_chain;
 use tempfile::Builder;
 use zip::ZipArchive;
 
-error_chain! {
-     foreign_links {
-         Io(std::io::Error);
-         HttpRequest(reqwest::Error);
-     }
-}
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<(), Box<dyn Error>> {
     let tmp_dir = Builder::new().prefix("example").tempdir()?;
     let url = "https://chromedriver.storage.googleapis.com/106.0.5249.21/chromedriver_linux64.zip";
     //let url = "https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/105.0.1343.34/edgedriver_arm64.zip";
