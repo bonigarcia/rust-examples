@@ -20,9 +20,13 @@ use zip::ZipArchive;
 #[derive(Parser, Debug)]
 #[clap(version, about, long_about = None)]
 struct Cli {
-    /// Browser for resolving its driver (e.g., chrome, firefox, edge)
+    /// Browser type (e.g., chrome, firefox, edge)
     #[clap(short, long, value_parser)]
     browser: String,
+
+    /// Major browser version (e.g., 105, 106, etc.)
+    #[clap(short, long, value_parser, default_value = "")]
+    version: String,
 
     /// Display DEBUG messages
     #[clap(short, long)]
@@ -66,8 +70,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let browser_type: String = String::from(cli.browser).to_lowercase();
     if browser_type.eq("chrome") {
-        let browser_version = get_browser_version();
-        log::info!("The version of your {} is {}", browser_type, browser_version);
+        let mut browser_version = cli.version;
+        if browser_version.is_empty() {
+            browser_version = get_browser_version();
+            log::info!("The version of your local {} is {}", browser_type, browser_version);
+        }
         let driver_version = get_chromedriver_version(&browser_version)?;
         log::info!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
 
