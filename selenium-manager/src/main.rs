@@ -68,8 +68,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     if browser_type.eq("chrome") {
         let browser_version = get_browser_version();
         log::info!("The version of your {} is {}", browser_type, browser_version);
+        let driver_version = get_chromedriver_version(&browser_version)?;
+        log::info!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
 
-        download_chromedriver(browser_version)?;
+        download_driver(driver_version)?;
         Ok(())
     } else {
         log::error!("{} is not unknown", browser_type);
@@ -88,13 +90,13 @@ fn get_browser_version() -> String {
         "macos" => ["-c", r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
         _ => ["-c", "google-chrome --version"],
     };
-    log::trace!("Running shell command: {:?}", args);
+    log::debug!("Running shell command: {:?}", args);
 
     let output = Command::new(command)
         .args(args)
         .output()
         .expect("command failed to start");
-    log::trace!("Output: {:?}", output);
+    log::debug!("Output: {:?}", output);
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let re = Regex::new(r"[^\d^\.]").unwrap();
@@ -107,12 +109,15 @@ fn get_browser_version() -> String {
 }
 
 #[tokio::main]
-async fn download_chromedriver(chrome_version: String) -> Result<(), Box<dyn Error>> {
-    log::debug!("Downloading chromedriver for Chrome {}", chrome_version);
+async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
+    let url = match OS {
+        "windows" => format!("https://chromedriver.storage.googleapis.com/{}/chromedriver_win32.zip", driver_version),
+        "macos" => format!("https://chromedriver.storage.googleapis.com/{}/chromedriver_mac64.zip", driver_version),
+        _ => format!("https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip", driver_version),
+    };
+    log::debug!("Downloading chromedriver {} from {}", driver_version, url);
 
     let tmp_dir = Builder::new().prefix("example").tempdir()?;
-    let url = "https://chromedriver.storage.googleapis.com/106.0.5249.21/chromedriver_linux64.zip";
-    //let url = "https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/105.0.1343.34/edgedriver_arm64.zip";
     let response = reqwest::get(url).await?;
     let target_path;
     let mut tmp_file = {
@@ -123,11 +128,11 @@ async fn download_chromedriver(chrome_version: String) -> Result<(), Box<dyn Err
             .and_then(|name| if name.is_empty() { None } else { Some(name) })
             .unwrap_or("tmp.bin");
 
-        log::debug!("File to be downloaded: {}", target_name);
+        log::trace!("File to be downloaded: {}", target_name);
         let target_name = tmp_dir.path().join(target_name);
         target_path = String::from(target_name.to_str().unwrap());
 
-        log::debug!("It will be located under: {}", target_path);
+        log::trace!("Temporal folder for driver package: {}", target_path);
         File::create(target_name)?
     };
     let mut content = Cursor::new(response.bytes().await?);
@@ -147,10 +152,10 @@ fn unzip(zip_file: String) {
             None => continue,
         };
         if (file.name()).ends_with('/') {
-            log::trace!("File {} extracted to {}", i, out_path.display());
+            log::debug!("File extracted to {}", out_path.display());
             fs::create_dir_all(&out_path).unwrap();
         } else {
-            log::trace!("File {} extracted to {} ({} bytes)", i, out_path.display(), file.size());
+            log::debug!("File extracted to {} ({} bytes)", out_path.display(), file.size());
             if let Some(p) = out_path.parent() {
                 if !p.exists() {
                     fs::create_dir_all(&p).unwrap();
@@ -170,4 +175,13 @@ fn unzip(zip_file: String) {
             }
         }
     }
+}
+
+#[tokio::main]
+async fn get_chromedriver_version(chrome_version: &String) -> Result<String, Box<dyn Error>> {
+    let chromedriver_url = format!("https://chromedriver.storage.googleapis.com/LATEST_RELEASE_{}", chrome_version);
+    let chromedriver_version = reqwest::get(chromedriver_url)
+        .await?.text().await?;
+
+    Ok(chromedriver_version)
 }
