@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "os_arch"
+name = "references"
 version = "0.1.0"
