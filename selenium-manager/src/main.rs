@@ -59,17 +59,15 @@ fn main() {
 
     let browser_type: String = String::from(cli.browser).to_lowercase();
     if browser_type.eq("chrome") {
-        let chrome_version = get_browser_version();
-        log::info!("The version of your {} is {}", browser_type, chrome_version);
+        let browser_version = get_browser_version();
+        log::info!("The version of your {} is {}", browser_type, browser_version);
     } else {
         log::error!("{} is not supported", browser_type);
     }
-
-    // log::debug!("Debug message");
 }
 
 
-fn get_chrome_version() -> String {
+fn get_browser_version() -> String {
     let command = match OS {
         "windows" => "cmd",
         _ => "sh"
@@ -90,5 +88,9 @@ fn get_chrome_version() -> String {
     let stdout = String::from_utf8_lossy(&output.stdout);
     let re = Regex::new(r"[^\d^\.]").unwrap();
 
-    re.replace_all(&*stdout, "").to_string()
+    let browser_version = re.replace_all(&*stdout, "").to_string();
+    log::debug!("Your browser version is {}", browser_version);
+
+    let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
+    browser_version_vec.get(0).unwrap().to_string()
 }
