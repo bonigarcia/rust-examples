@@ -99,7 +99,7 @@ fn get_browser_version() -> String {
     log::debug!("Output: {:?}", output);
 
     let stdout = String::from_utf8_lossy(&output.stdout);
-    let re = Regex::new(r"[^\d^\.]").unwrap();
+    let re = Regex::new(r"[^\d^.]").unwrap();
 
     let browser_version = re.replace_all(&*stdout, "").to_string();
     log::debug!("Your browser version is {}", browser_version);
@@ -161,7 +161,7 @@ fn unzip(zip_file: String) {
                     fs::create_dir_all(&p).unwrap();
                 }
             }
-            let mut outfile = fs::File::create(&out_path).unwrap();
+            let mut outfile = File::create(&out_path).unwrap();
             io::copy(&mut file, &mut outfile).unwrap();
         }
 
