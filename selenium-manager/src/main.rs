@@ -1,4 +1,4 @@
-use std::env::consts::OS;
+use std::env::consts::{ARCH, OS};
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -106,7 +106,7 @@ fn get_browser_version() -> String {
         .args(args)
         .output()
         .expect("command failed to start");
-    log::debug!("Output: {:?}", output);
+    log::debug!("{:?}", output);
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let re = Regex::new(r"[^\d^.]").unwrap();
@@ -120,9 +120,13 @@ fn get_browser_version() -> String {
 
 #[tokio::main]
 async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
+    let m1 = match ARCH {
+        "aarch64" => "_m1",
+        _ => "",
+    };
     let url = match OS {
         "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
-        "macos" => format!("{}{}/{}_mac64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
+        "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER, m1),
         _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
     };
     log::debug!("Downloading {} {} from {}", CHROMEDRIVER, driver_version, url);
