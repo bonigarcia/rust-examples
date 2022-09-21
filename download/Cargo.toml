@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 tokio = { version = "1.21.1", features = ["full"] }
 tempfile = "3.3.0"
-reqwest = "0.11.11"
+reqwest = "0.11.12"
 zip = "0.6.2"
