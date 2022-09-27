@@ -19,3 +19,4 @@ directories = "4.0.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.4"
+rstest = "0.15.0"
