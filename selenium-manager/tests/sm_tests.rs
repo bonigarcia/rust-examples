@@ -4,7 +4,7 @@ use std::str;
 #[test]
 fn test_browser_manager() {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap();
-    cmd.args(["--browser", "chrome"])
+    cmd.args(["--browser", "chrome", "--version", "105"])
         .assert()
         .success()
         .code(0);
@@ -17,5 +17,5 @@ fn test_browser_manager() {
 
     println!("--> OUTPUT: {}", output);
 
-    //assert!(output.contains("105"));
+    assert!(output.contains("105.0.5195.52"));
 }

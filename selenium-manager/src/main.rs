@@ -10,6 +10,7 @@ use std::process::Command;
 
 use clap::Parser;
 use env_logger::fmt::Color;
+use env_logger::Target::Stdout;
 use log::Level;
 use log::LevelFilter::{Debug, Info, Trace};
 use regex::Regex;
@@ -53,6 +54,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     env_logger::Builder::new()
         .filter_level(filter)
+        .target(Stdout)
         .format(|buf, record| {
             let mut level_style = buf.style();
             match record.level() {
