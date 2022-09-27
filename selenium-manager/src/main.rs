@@ -7,6 +7,7 @@ use std::io::copy;
 use std::io::Cursor;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::path::MAIN_SEPARATOR;
 use std::process::Command;
 
 use clap::Parser;
@@ -81,10 +82,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         let mut browser_version = cli.version;
         if browser_version.is_empty() {
             browser_version = get_browser_version();
-            log::info!("The version of your local {} is {}", browser_type, browser_version);
+            log::debug!("The version of your local {} is {}", browser_type, browser_version);
         }
         let driver_version = get_chromedriver_version(&browser_version)?;
-        log::info!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
+        log::debug!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
 
         download_driver(driver_version)?;
         Ok(())
@@ -163,9 +164,11 @@ async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
         "macos" => format!("mac64{}", m1),
         _ => String::from("linux64")
     };
+
+    let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
     let base_dirs = BaseDirs::new().unwrap();
     let cache = Path::new(base_dirs.home_dir())
-        .join(CACHE_FOLDER)
+        .join(cache_folder)
         .join(CHROMEDRIVER)
         .join(arch_folder)
         .join(driver_version);
@@ -195,7 +198,7 @@ fn unzip(zip_file: String, target: PathBuf) {
             }
             let mut outfile = File::create(&out_path).unwrap();
 
-            log::info!("Driver path: {}", out_path.display());
+            log::info!("{}", out_path.display());
             io::copy(&mut file, &mut outfile).unwrap();
         }
 
