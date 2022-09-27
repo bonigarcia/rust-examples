@@ -1227,6 +1227,7 @@ version = "0.1.0"
 dependencies = [
  "assert_cmd",
  "clap",
+ "directories 4.0.1",
  "env_logger",
  "exitcode",
  "log",

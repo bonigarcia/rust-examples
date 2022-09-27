@@ -6,9 +6,11 @@ use std::io;
 use std::io::copy;
 use std::io::Cursor;
 use std::io::Write;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use clap::Parser;
+use directories::BaseDirs;
 use env_logger::fmt::Color;
 use env_logger::Target::Stdout;
 use log::Level;
@@ -19,6 +21,7 @@ use zip::ZipArchive;
 
 static CHROMEDRIVER: &str = "chromedriver";
 static CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
+static CACHE_FOLDER: &str = ".cache/selenium";
 
 /// Selenium-Manager prototype
 #[derive(Parser, Debug)]
@@ -153,22 +156,35 @@ async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
     };
     let mut content = Cursor::new(response.bytes().await?);
     copy(&mut content, &mut tmp_file)?;
-    unzip(target_path);
+
+
+    let arch_folder = match OS {
+        "windows" => String::from("win32"),
+        "macos" => format!("mac64{}", m1),
+        _ => String::from("linux64")
+    };
+    let base_dirs = BaseDirs::new().unwrap();
+    let cache = Path::new(base_dirs.home_dir())
+        .join(CACHE_FOLDER)
+        .join(CHROMEDRIVER)
+        .join(arch_folder)
+        .join(driver_version);
+
+    unzip(target_path, cache);
     Ok(())
 }
 
-fn unzip(zip_file: String) {
+fn unzip(zip_file: String, target: PathBuf) {
     let file = File::open(zip_file).unwrap();
     let mut archive = ZipArchive::new(file).unwrap();
 
     for i in 0..archive.len() {
         let mut file = archive.by_index(i).unwrap();
         let out_path = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
+            Some(path) => target.join(path.to_owned()),
             None => continue,
         };
         if (file.name()).ends_with('/') {
-            log::debug!("File extracted to {}", out_path.display());
             fs::create_dir_all(&out_path).unwrap();
         } else {
             log::debug!("File extracted to {} ({} bytes)", out_path.display(), file.size());
@@ -178,6 +194,8 @@ fn unzip(zip_file: String) {
                 }
             }
             let mut outfile = File::create(&out_path).unwrap();
+
+            log::info!("Driver path: {}", out_path.display());
             io::copy(&mut file, &mut outfile).unwrap();
         }
 
