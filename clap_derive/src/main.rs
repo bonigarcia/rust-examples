@@ -46,6 +46,7 @@ fn main() {
                 record.args()
             )
         })
+        .target(env_logger::Target::Stdout)
         .init();
 
     log::error!("Error message");

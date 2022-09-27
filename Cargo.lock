@@ -211,6 +211,7 @@ dependencies = [
 name = "clap_derive"
 version = "0.1.0"
 dependencies = [
+ "assert_cmd",
  "clap",
  "env_logger",
  "exitcode",
