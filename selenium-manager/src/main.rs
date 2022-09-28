@@ -10,7 +10,7 @@ use log::LevelFilter::{Debug, Info, Trace};
 
 use selenium_manager::{BrowserManager, ChromeManager};
 
-/// Selenium-Manager prototype
+/// Selenium-Manager: Automated driver management for Selenium
 #[derive(Parser, Debug)]
 #[clap(version, about, long_about = None)]
 struct Cli {
