@@ -20,9 +20,9 @@ use regex::Regex;
 use tempfile::Builder;
 use zip::ZipArchive;
 
-static CHROMEDRIVER: &str = "chromedriver";
-static CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
-static CACHE_FOLDER: &str = ".cache/selenium";
+const CHROMEDRIVER: &str = "chromedriver";
+const CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
+const CACHE_FOLDER: &str = ".cache/selenium";
 
 /// Selenium-Manager prototype
 #[derive(Parser, Debug)]
@@ -48,6 +48,31 @@ struct Cli {
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
+    setup_logging(&cli);
+
+    let browser_type: String = String::from(cli.browser).to_lowercase();
+    let os = OS;
+    let arch = ARCH;
+
+    if browser_type.eq("chrome") {
+        let mut browser_version = cli.version;
+        if browser_version.is_empty() {
+            browser_version = get_browser_version();
+            log::debug!("The version of your local {} is {}", browser_type, browser_version);
+        }
+        let driver_version = get_chromedriver_version(&browser_version)?;
+        log::debug!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
+
+        download_driver(&driver_version, &os, &arch)?;
+        Ok(())
+    } else {
+        log::error!("{} is not unknown", browser_type);
+        Err("Browser not supported")?
+    }
+}
+
+
+fn setup_logging(cli: &Cli) {
     let mut filter = match cli.debug {
         true => Debug,
         false => Info,
@@ -76,23 +101,6 @@ fn main() -> Result<(), Box<dyn Error>> {
             )
         })
         .init();
-
-    let browser_type: String = String::from(cli.browser).to_lowercase();
-    if browser_type.eq("chrome") {
-        let mut browser_version = cli.version;
-        if browser_version.is_empty() {
-            browser_version = get_browser_version();
-            log::debug!("The version of your local {} is {}", browser_type, browser_version);
-        }
-        let driver_version = get_chromedriver_version(&browser_version)?;
-        log::debug!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
-
-        download_driver(driver_version)?;
-        Ok(())
-    } else {
-        log::error!("{} is not unknown", browser_type);
-        Err("Browser not supported")?
-    }
 }
 
 
@@ -124,17 +132,29 @@ fn get_browser_version() -> String {
     browser_version_vec.get(0).unwrap().to_string()
 }
 
-#[tokio::main]
-async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
-    let m1 = match ARCH {
+
+fn get_m1_prefix(arch: &str) -> &str {
+    let m1 = match arch {
         "aarch64" => "_m1",
         _ => "",
     };
-    let url = match OS {
+    return m1;
+}
+
+fn get_driver_url(driver_version: &String, os: &str, arch: &str) -> String {
+    let m1 = get_m1_prefix(&arch);
+    let url = match os {
         "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
         "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER, m1),
         _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
     };
+    return url;
+}
+
+#[tokio::main]
+async fn download_driver(driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
+    let url = get_driver_url(&driver_version, os, arch);
+
     log::debug!("Downloading {} {} from {}", CHROMEDRIVER, driver_version, url);
 
     let tmp_dir = Builder::new().prefix("example").tempdir()?;
@@ -158,8 +178,8 @@ async fn download_driver(driver_version: String) -> Result<(), Box<dyn Error>> {
     let mut content = Cursor::new(response.bytes().await?);
     copy(&mut content, &mut tmp_file)?;
 
-
-    let arch_folder = match OS {
+    let m1 = get_m1_prefix(&arch);
+    let arch_folder = match os {
         "windows" => String::from("win32"),
         "macos" => format!("mac64{}", m1),
         _ => String::from("linux64")
