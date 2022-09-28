@@ -31,7 +31,7 @@ pub trait BrowserManager {
 
     fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>>;
 
-    fn get_m1_prefix(&self, arch: &str) -> &str;
+    fn get_cache_path(&self, driver_name: &str, driver_version: &String, os: &str, arch: &str) -> PathBuf;
 }
 
 pub struct ChromeManager {
@@ -86,7 +86,7 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {
-        let m1 = Self::get_m1_prefix(&self, &arch);
+        let m1 = get_m1_prefix(&arch);
         match os {
             "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
             "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, self.driver_name, m1),
@@ -106,30 +106,32 @@ impl BrowserManager for ChromeManager {
         let url = Self::get_driver_url(&self, &driver_version, os, arch);
         let (_tmp_dir, target_path) = download_file(url)?;
 
-        let m1 = Self::get_m1_prefix(&self, &arch);
+        let cache = Self::get_cache_path(&self, self.driver_name, &driver_version, &os, &arch);
+        unzip(target_path, cache);
+        Ok(())
+    }
+
+    fn get_cache_path(&self, driver_name: &str, driver_version: &String, os: &str, arch: &str) -> PathBuf {
+        let m1 = get_m1_prefix(&arch);
         let arch_folder = match os {
             "windows" => String::from("win32"),
             "macos" => format!("mac64{}", m1),
             _ => String::from("linux64")
         };
-
         let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
         let base_dirs = BaseDirs::new().unwrap();
-        let cache = Path::new(base_dirs.home_dir())
+        Path::new(base_dirs.home_dir())
             .join(cache_folder)
-            .join(self.driver_name)
+            .join(driver_name)
             .join(arch_folder)
-            .join(driver_version);
-        unzip(target_path, cache);
-
-        Ok(())
+            .join(driver_version)
     }
+}
 
-    fn get_m1_prefix(&self, arch: &str) -> &str {
-        match arch {
-            "aarch64" => "_m1",
-            _ => "",
-        }
+fn get_m1_prefix(arch: &str) -> &str {
+    match arch {
+        "aarch64" => "_m1",
+        _ => "",
     }
 }
 
