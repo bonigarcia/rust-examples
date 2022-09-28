@@ -4,7 +4,7 @@ use rstest::rstest;
 
 #[rstest]
 #[case("105", "105.0.5195.52")]
-#[case("106", "106.0.5249.21")]
+#[case("106", "106.0.5249.61")]
 fn test_browser_manager(#[case] browser_version: String, #[case] driver_version: String) {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap();
     cmd.args(["--browser", "chrome", "--version", &browser_version])
