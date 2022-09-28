@@ -1,29 +1,25 @@
-pub trait Summary {
-    fn summarize(&self) -> String;
+pub trait BrowserManager {
+    fn get_browser_version(&self) -> String;
 }
 
-pub struct NewsArticle {
-    pub headline: String,
-    pub location: String,
-    pub author: String,
-    pub content: String,
+pub struct ChromeManager {
+    pub browser_name : &'static str,
+    pub driver_name : &'static str,
 }
 
-impl Summary for NewsArticle {
-    fn summarize(&self) -> String {
-        format!("{}, by {} ({})", self.headline, self.author, self.location)
+impl BrowserManager for ChromeManager {
+    fn get_browser_version(&self) -> String {
+        format!("{} 106", self.browser_name)
     }
 }
 
-pub struct Tweet {
-    pub username: String,
-    pub content: String,
-    pub reply: bool,
-    pub retweet: bool,
+pub struct FirefoxManager {
+    pub browser_name : &'static str,
+    pub driver_name : &'static str,
 }
 
-impl Summary for Tweet {
-    fn summarize(&self) -> String {
-        format!("{}: {}", self.username, self.content)
+impl BrowserManager for FirefoxManager {
+    fn get_browser_version(&self) -> String {
+        format!("{} 105", self.browser_name)
     }
 }

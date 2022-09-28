@@ -1,14 +1,15 @@
-use traits::{Summary, Tweet};
+use traits::{BrowserManager, ChromeManager, FirefoxManager};
 
 fn main() {
-    let tweet = Tweet {
-        username: String::from("horse_ebooks"),
-        content: String::from(
-            "of course, as you probably already know, people",
-        ),
-        reply: false,
-        retweet: false,
-    };
+    let is_chrome = true;
+    let browser_driver : Box<dyn BrowserManager>;
 
-    println!("1 new tweet: {}", tweet.summarize());
+    if is_chrome {
+        browser_driver = Box::new(ChromeManager{browser_name: "chrome", driver_name: "chromedriver" } );
+    }
+    else {
+        browser_driver = Box::new(FirefoxManager{browser_name: "firefox", driver_name: "geckodriver" } );
+    }
+
+    println!("Browser version: {}", browser_driver.get_browser_version());
 }
