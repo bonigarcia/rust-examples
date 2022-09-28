@@ -11,5 +11,5 @@ fn main() {
         browser_driver = Box::new(FirefoxManager{browser_name: "firefox", driver_name: "geckodriver" } );
     }
 
-    println!("Browser version: {}", browser_driver.get_browser_version());
+    println!("Browser version: {}", browser_driver.get_browser_version("105"));
 }

@@ -1,5 +1,5 @@
 pub trait BrowserManager {
-    fn get_browser_version(&self) -> String;
+    fn get_browser_version(&self, version: &str) -> String;
 }
 
 pub struct ChromeManager {
@@ -8,8 +8,8 @@ pub struct ChromeManager {
 }
 
 impl BrowserManager for ChromeManager {
-    fn get_browser_version(&self) -> String {
-        format!("{} 106", self.browser_name)
+    fn get_browser_version(&self, version: &str) -> String {
+        format!("{} {}", self.browser_name, version)
     }
 }
 
@@ -19,7 +19,7 @@ pub struct FirefoxManager {
 }
 
 impl BrowserManager for FirefoxManager {
-    fn get_browser_version(&self) -> String {
-        format!("{} 105", self.browser_name)
+    fn get_browser_version(&self, version: &str) -> String {
+        format!("{} {}", self.browser_name, version)
     }
 }
