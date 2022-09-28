@@ -20,6 +20,7 @@ use regex::Regex;
 use tempfile::{Builder, TempDir};
 use zip::ZipArchive;
 
+const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
 const CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
 const CACHE_FOLDER: &str = ".cache/selenium";
@@ -45,6 +46,106 @@ struct Cli {
     trace: bool,
 }
 
+trait BrowserManager {
+    fn new(browser_name: String, driver_name: String) -> Self;
+
+    fn get_browser_version() -> String;
+
+    fn get_driver_url(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> String;
+
+    fn get_driver_version(browser_version: &String) -> Result<String, Box<dyn Error>>;
+
+    fn download_driver(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>>;
+
+    fn get_m1_prefix(arch: &str) -> &str;
+}
+
+struct ChromeManager {
+    browser_name: String,
+    driver_name: String,
+}
+
+impl BrowserManager for ChromeManager {
+    fn new(browser_name: String, driver_name: String) -> Self {
+        ChromeManager { browser_name, driver_name }
+    }
+
+    fn get_browser_version() -> String {
+        let command = match OS {
+            "windows" => "cmd",
+            _ => "sh"
+        };
+        let args = match OS {
+            "windows" => ["/C", r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#],
+            "macos" => ["-c", r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
+            _ => ["-c", "google-chrome --version"],
+        };
+        log::debug!("Running shell command: {:?}", args);
+
+        let output = Command::new(command)
+            .args(args)
+            .output()
+            .expect("command failed to start");
+        log::debug!("{:?}", output);
+
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let re = Regex::new(r"[^\d^.]").unwrap();
+
+        let browser_version = re.replace_all(&*stdout, "").to_string();
+        log::debug!("Your browser version is {}", browser_version);
+
+        let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
+        browser_version_vec.get(0).unwrap().to_string()
+    }
+
+    fn get_driver_url(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> String {
+        let m1 = Self::get_m1_prefix(&arch);
+        match os {
+            "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, driver_name),
+            "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, driver_name, m1),
+            _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, driver_name),
+        }
+    }
+
+    #[tokio::main]
+    async fn get_driver_version(browser_version: &String) -> Result<String, Box<dyn Error>> {
+        let driver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, browser_version);
+        let driver_version = reqwest::get(driver_url).await?.text().await?;
+
+        Ok(driver_version)
+    }
+
+    fn download_driver(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
+        let url = Self::get_driver_url(&driver_name, &driver_version, os, arch);
+        let (_tmp_dir, target_path) = download_file(url)?;
+
+        let m1 = Self::get_m1_prefix(&arch);
+        let arch_folder = match os {
+            "windows" => String::from("win32"),
+            "macos" => format!("mac64{}", m1),
+            _ => String::from("linux64")
+        };
+
+        let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
+        let base_dirs = BaseDirs::new().unwrap();
+        let cache = Path::new(base_dirs.home_dir())
+            .join(cache_folder)
+            .join(driver_name)
+            .join(arch_folder)
+            .join(driver_version);
+        unzip(target_path, cache);
+
+        Ok(())
+    }
+
+    fn get_m1_prefix(arch: &str) -> &str {
+        match arch {
+            "aarch64" => "_m1",
+            _ => "",
+        }
+    }
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
@@ -55,15 +156,20 @@ fn main() -> Result<(), Box<dyn Error>> {
     let arch = ARCH;
 
     if browser_type.eq("chrome") {
+        let _chrome_manager = ChromeManager {
+            browser_name: String::from(CHROME),
+            driver_name: String::from(CHROMEDRIVER),
+        };
+
         let mut browser_version = cli.version;
         if browser_version.is_empty() {
-            browser_version = get_browser_version();
+            browser_version = ChromeManager::get_browser_version();
             log::debug!("The version of your local {} is {}", browser_type, browser_version);
         }
-        let driver_version = get_driver_version(&browser_version)?;
+        let driver_version = ChromeManager::get_driver_version(&browser_version)?;
         log::debug!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
 
-        download_driver(&CHROMEDRIVER, &driver_version, &os, &arch)?;
+        ChromeManager::download_driver(&CHROMEDRIVER, &driver_version, &os, &arch)?;
         Ok(())
     } else {
         log::error!("{} is not unknown", browser_type);
@@ -104,51 +210,6 @@ fn setup_logging(cli: &Cli) {
 }
 
 
-fn get_browser_version() -> String {
-    let command = match OS {
-        "windows" => "cmd",
-        _ => "sh"
-    };
-    let args = match OS {
-        "windows" => ["/C", r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#],
-        "macos" => ["-c", r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
-        _ => ["-c", "google-chrome --version"],
-    };
-    log::debug!("Running shell command: {:?}", args);
-
-    let output = Command::new(command)
-        .args(args)
-        .output()
-        .expect("command failed to start");
-    log::debug!("{:?}", output);
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let re = Regex::new(r"[^\d^.]").unwrap();
-
-    let browser_version = re.replace_all(&*stdout, "").to_string();
-    log::debug!("Your browser version is {}", browser_version);
-
-    let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
-    browser_version_vec.get(0).unwrap().to_string()
-}
-
-
-fn get_m1_prefix(arch: &str) -> &str {
-    match arch {
-        "aarch64" => "_m1",
-        _ => "",
-    }
-}
-
-fn get_driver_url(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> String {
-    let m1 = get_m1_prefix(&arch);
-    match os {
-        "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, driver_name),
-        "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, driver_name, m1),
-        _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, driver_name),
-    }
-}
-
 #[tokio::main]
 async fn download_file(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
     let tmp_dir = Builder::new().prefix("selenium-manager").tempdir()?;
@@ -175,29 +236,6 @@ async fn download_file(url: String) -> Result<(TempDir, String), Box<dyn Error>>
     copy(&mut content, &mut tmp_file)?;
 
     Ok((tmp_dir, target_path))
-}
-
-fn download_driver(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
-    let url = get_driver_url(&driver_name, &driver_version, os, arch);
-    let (_tmp_dir, target_path) = download_file(url)?;
-
-    let m1 = get_m1_prefix(&arch);
-    let arch_folder = match os {
-        "windows" => String::from("win32"),
-        "macos" => format!("mac64{}", m1),
-        _ => String::from("linux64")
-    };
-
-    let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
-    let base_dirs = BaseDirs::new().unwrap();
-    let cache = Path::new(base_dirs.home_dir())
-        .join(cache_folder)
-        .join(driver_name)
-        .join(arch_folder)
-        .join(driver_version);
-    unzip(target_path, cache);
-
-    Ok(())
 }
 
 fn unzip(zip_file: String, target: PathBuf) {
@@ -235,12 +273,4 @@ fn unzip(zip_file: String, target: PathBuf) {
             }
         }
     }
-}
-
-#[tokio::main]
-async fn get_driver_version(browser_version: &String) -> Result<String, Box<dyn Error>> {
-    let driver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, browser_version);
-    let driver_version = reqwest::get(driver_url).await?.text().await?;
-
-    Ok(driver_version)
 }
