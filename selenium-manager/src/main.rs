@@ -134,21 +134,19 @@ fn get_browser_version() -> String {
 
 
 fn get_m1_prefix(arch: &str) -> &str {
-    let m1 = match arch {
+    match arch {
         "aarch64" => "_m1",
         _ => "",
-    };
-    return m1;
+    }
 }
 
 fn get_driver_url(driver_version: &String, os: &str, arch: &str) -> String {
     let m1 = get_m1_prefix(&arch);
-    let url = match os {
+    match os {
         "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
         "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER, m1),
         _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
-    };
-    return url;
+    }
 }
 
 #[tokio::main]
