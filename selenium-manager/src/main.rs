@@ -17,7 +17,7 @@ use env_logger::Target::Stdout;
 use log::Level;
 use log::LevelFilter::{Debug, Info, Trace};
 use regex::Regex;
-use tempfile::Builder;
+use tempfile::{Builder, TempDir};
 use zip::ZipArchive;
 
 const CHROMEDRIVER: &str = "chromedriver";
@@ -60,10 +60,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             browser_version = get_browser_version();
             log::debug!("The version of your local {} is {}", browser_type, browser_version);
         }
-        let driver_version = get_chromedriver_version(&browser_version)?;
+        let driver_version = get_driver_version(&browser_version)?;
         log::debug!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
 
-        download_driver(&driver_version, &os, &arch)?;
+        download_driver(&CHROMEDRIVER, &driver_version, &os, &arch)?;
         Ok(())
     } else {
         log::error!("{} is not unknown", browser_type);
@@ -140,22 +140,20 @@ fn get_m1_prefix(arch: &str) -> &str {
     }
 }
 
-fn get_driver_url(driver_version: &String, os: &str, arch: &str) -> String {
+fn get_driver_url(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> String {
     let m1 = get_m1_prefix(&arch);
     match os {
-        "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
-        "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER, m1),
-        _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, CHROMEDRIVER),
+        "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, driver_name),
+        "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, driver_name, m1),
+        _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, driver_name),
     }
 }
 
 #[tokio::main]
-async fn download_driver(driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
-    let url = get_driver_url(&driver_version, os, arch);
+async fn download_file(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
+    let tmp_dir = Builder::new().prefix("selenium-manager").tempdir()?;
+    log::debug!("Downloading {} to temporal folder {:?}", url, tmp_dir.path());
 
-    log::debug!("Downloading {} {} from {}", CHROMEDRIVER, driver_version, url);
-
-    let tmp_dir = Builder::new().prefix("example").tempdir()?;
     let response = reqwest::get(url).await?;
     let target_path;
     let mut tmp_file = {
@@ -176,6 +174,13 @@ async fn download_driver(driver_version: &String, os: &str, arch: &str) -> Resul
     let mut content = Cursor::new(response.bytes().await?);
     copy(&mut content, &mut tmp_file)?;
 
+    Ok((tmp_dir, target_path))
+}
+
+fn download_driver(driver_name: &str, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
+    let url = get_driver_url(&driver_name, &driver_version, os, arch);
+    let (_tmp_dir, target_path) = download_file(url)?;
+
     let m1 = get_m1_prefix(&arch);
     let arch_folder = match os {
         "windows" => String::from("win32"),
@@ -187,11 +192,11 @@ async fn download_driver(driver_version: &String, os: &str, arch: &str) -> Resul
     let base_dirs = BaseDirs::new().unwrap();
     let cache = Path::new(base_dirs.home_dir())
         .join(cache_folder)
-        .join(CHROMEDRIVER)
+        .join(driver_name)
         .join(arch_folder)
         .join(driver_version);
-
     unzip(target_path, cache);
+
     Ok(())
 }
 
@@ -233,10 +238,9 @@ fn unzip(zip_file: String, target: PathBuf) {
 }
 
 #[tokio::main]
-async fn get_chromedriver_version(chrome_version: &String) -> Result<String, Box<dyn Error>> {
-    let chromedriver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, chrome_version);
-    let chromedriver_version = reqwest::get(chromedriver_url)
-        .await?.text().await?;
+async fn get_driver_version(browser_version: &String) -> Result<String, Box<dyn Error>> {
+    let driver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, browser_version);
+    let driver_version = reqwest::get(driver_url).await?.text().await?;
 
-    Ok(chromedriver_version)
+    Ok(driver_version)
 }
