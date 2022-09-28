@@ -1,4 +1,3 @@
-use std::env::consts::OS;
 use std::error::Error;
 use std::fs;
 use std::fs::File;
@@ -24,7 +23,7 @@ pub trait BrowserManager {
 
     fn get_driver_name(&self) -> &str;
 
-    fn get_browser_version(&self) -> String;
+    fn get_browser_version(&self, os: &str) -> String;
 
     fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String;
 
@@ -58,12 +57,12 @@ impl BrowserManager for ChromeManager {
         self.driver_name
     }
 
-    fn get_browser_version(&self) -> String {
-        let command = match OS {
+    fn get_browser_version(&self, os: &str) -> String {
+        let command = match os {
             "windows" => "cmd",
             _ => "sh"
         };
-        let args = match OS {
+        let args = match os {
             "windows" => ["/C", r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#],
             "macos" => ["-c", r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
             _ => ["-c", "google-chrome --version"],
