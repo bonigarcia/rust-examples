@@ -39,24 +39,26 @@ fn main() -> Result<(), Box<dyn Error>> {
     let browser_type: String = String::from(cli.browser).to_lowercase();
     let os = OS;
     let arch = ARCH;
+    let browser_manager : Box<dyn BrowserManager>;
 
     if browser_type.eq("chrome") {
-        let chrome_manager = ChromeManager::new();
-
-        let mut browser_version = cli.version;
-        if browser_version.is_empty() {
-            browser_version = chrome_manager.get_browser_version();
-            log::debug!("The version of your local {} is {}", browser_type, browser_version);
-        }
-        let driver_version = chrome_manager.get_driver_version(&browser_version)?;
-        log::debug!("You need to use chromedriver {} for controlling Chrome {} with Selenium", driver_version, browser_version);
-
-        chrome_manager.download_driver(&driver_version, &os, &arch)?;
-        Ok(())
+        browser_manager = ChromeManager::new();
     } else {
         log::error!("{} is not unknown", browser_type);
-        Err("Browser not supported")?
+        return Err("Browser not supported")?;
     }
+
+    let mut browser_version = cli.version;
+    if browser_version.is_empty() {
+        browser_version = browser_manager.get_browser_version();
+        log::debug!("The version of your local {} is {}", browser_type, browser_version);
+    }
+    let driver_version = browser_manager.get_driver_version(&browser_version)?;
+    log::debug!("You need to use {} {}", browser_manager.get_driver_name(), driver_version);
+
+    browser_manager.download_driver(&driver_version, &os, &arch)?;
+    Ok(())
+
 }
 
 

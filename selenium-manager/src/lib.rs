@@ -20,7 +20,9 @@ const CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
 const CACHE_FOLDER: &str = ".cache/selenium";
 
 pub trait BrowserManager {
-    fn new() -> Self;
+    fn get_browser_name(&self) -> &str;
+
+    fn get_driver_name(&self) -> &str;
 
     fn get_browser_version(&self) -> String;
 
@@ -38,12 +40,22 @@ pub struct ChromeManager {
     pub driver_name: &'static str,
 }
 
-impl BrowserManager for ChromeManager {
-    fn new() -> Self {
-        ChromeManager {
+impl ChromeManager {
+    pub fn new() -> Box<Self> {
+        Box::new(ChromeManager {
             browser_name: CHROME,
             driver_name: CHROMEDRIVER,
-        }
+        })
+    }
+}
+
+impl BrowserManager for ChromeManager {
+    fn get_browser_name(&self) -> &str {
+        self.browser_name
+    }
+
+    fn get_driver_name(&self) -> &str {
+        self.driver_name
     }
 
     fn get_browser_version(&self) -> String {
