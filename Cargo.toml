@@ -14,5 +14,6 @@ members = [
     "reqwest-json",
     "shell",
     "download",
-    "selenium-manager"
+    "selenium-manager",
+    "traits"
 ]

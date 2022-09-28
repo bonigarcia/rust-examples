@@ -1644,6 +1644,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "traits"
+version = "0.1.0"
+
+[[package]]
 name = "try-lock"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
