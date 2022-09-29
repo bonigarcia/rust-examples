@@ -9,6 +9,8 @@ use std::path::PathBuf;
 use tempfile::{Builder, TempDir};
 use zip::ZipArchive;
 
+pub const CACHE_FOLDER: &str = ".cache/selenium";
+
 pub trait BrowserManager {
     fn get_browser_name(&self) -> &str;
 

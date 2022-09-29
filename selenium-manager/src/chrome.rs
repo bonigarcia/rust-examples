@@ -6,12 +6,11 @@ use std::process::Command;
 use directories::BaseDirs;
 use regex::Regex;
 
-use selenium_manager::{BrowserManager, download_file, get_m1_prefix, unzip};
+use selenium_manager::{BrowserManager, CACHE_FOLDER, download_file, get_m1_prefix, unzip};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
 const CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
-const CACHE_FOLDER: &str = ".cache/selenium";
 
 pub struct ChromeManager {
     pub browser_name: &'static str,

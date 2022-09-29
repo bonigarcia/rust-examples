@@ -10,8 +10,9 @@ use log::LevelFilter::{Debug, Info, Trace};
 
 use selenium_manager::BrowserManager;
 
-mod chrome;
 use crate::chrome::ChromeManager;
+
+mod chrome;
 
 /// Selenium-Manager: Automated driver management for Selenium
 #[derive(Parser, Debug)]
@@ -42,7 +43,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let browser_type: String = String::from(cli.browser).to_lowercase();
     let os = OS;
     let arch = ARCH;
-    let browser_manager : Box<dyn BrowserManager>;
+    let browser_manager: Box<dyn BrowserManager>;
 
     if browser_type.eq("chrome") {
         browser_manager = ChromeManager::new();
@@ -61,9 +62,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     browser_manager.download_driver(&driver_version, &os, &arch)?;
     Ok(())
-
 }
-
 
 fn setup_logging(cli: &Cli) {
     let mut filter = match cli.debug {
