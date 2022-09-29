@@ -110,13 +110,8 @@ pub fn get_m1_prefix(arch: &str) -> &str {
     }
 }
 
-pub fn run_shell_command(os: &str, args: [&str; 2]) -> Result<String, Box<dyn Error>> {
-    let command = match os {
-        "windows" => "cmd",
-        _ => "sh"
-    };
-    log::debug!("Running shell command: {:?}", args);
-
+pub fn run_shell_command(command: &str, args: [&str; 2]) -> Result<String, Box<dyn Error>> {
+    log::debug!("Running {} command: {:?}",command, args);
     let output = Command::new(command)
         .args(args)
         .output()?;
@@ -128,4 +123,22 @@ pub fn run_shell_command(os: &str, args: [&str; 2]) -> Result<String, Box<dyn Er
 pub fn parse_version(version_text: String) -> String {
     let re = Regex::new(r"[^\d^.]").unwrap();
     re.replace_all(&*version_text, "").to_string()
+}
+
+pub fn run_shell_commands(shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
+    for arg in args.iter() {
+        let output = match run_shell_command(&shell, [flag, *arg]) {
+            Ok(out) => out,
+            Err(_e) => continue,
+        };
+        let browser_version = parse_version(output);
+        if browser_version.is_empty() {
+            continue;
+        }
+        log::debug!("Your browser version is {}", browser_version);
+
+        let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
+        return Ok(browser_version_vec.get(0).unwrap().to_string());
+    }
+    Err(String::from("Browser not found"))
 }

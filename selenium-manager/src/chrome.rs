@@ -4,7 +4,7 @@ use std::path::MAIN_SEPARATOR;
 
 use directories::BaseDirs;
 
-use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix, parse_version, run_shell_command};
+use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix, run_shell_commands};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -34,30 +34,15 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_browser_version(&self, os: &str) -> Result<String, String> {
-        let (command_arg, args) = match os {
-            "windows" => ("/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                     r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                     r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                     r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
-            "macos" => ("-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
-            _ => ("-c", vec!("google-chrome --version")),
+        let (shell, flag, args) = match os {
+            "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                            r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                            r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                            r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
+            "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
+            _ => ("sh", "-c", vec!("google-chrome --version")),
         };
-
-        for arg in args.iter() {
-            let output = match run_shell_command(&os, [command_arg, *arg]) {
-                Ok(out) => out,
-                Err(_e) => continue,
-            };
-            let browser_version = parse_version(output);
-            if browser_version.is_empty() {
-                continue;
-            }
-            log::debug!("Your Chrome version is {}", browser_version);
-
-            let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
-            return Ok(browser_version_vec.get(0).unwrap().to_string());
-        }
-        Err(String::from("Chrome not found"))
+        run_shell_commands(shell, flag, args)
     }
 
     fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {
