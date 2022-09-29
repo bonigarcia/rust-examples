@@ -88,7 +88,7 @@ pub fn unzip(zip_file: String, target: PathBuf) {
                 use std::os::unix::fs::PermissionsExt;
 
                 if let Some(mode) = file.unix_mode() {
-                    fs::set_permissions(&out_path, fs::Permissions::from_mode(mode)).unwrap();
+                    fs::set_permissions(&target, fs::Permissions::from_mode(mode)).unwrap();
                 }
             }
 
