@@ -14,9 +14,13 @@ use crate::chrome::ChromeManager;
 
 mod chrome;
 
-/// Selenium-Manager: Automated driver management for Selenium
+/// Automated driver management for Selenium
 #[derive(Parser, Debug)]
-#[clap(about, long_about = None)]
+#[clap(version, about, long_about = None, disable_version_flag = true, help_template = "\
+{name} {version}
+{about-with-newline}
+{usage-heading} {usage}
+{all-args}")]
 struct Cli {
     /// Browser type (e.g., chrome, firefox, edge)
     #[clap(short, long, value_parser)]
