@@ -4,7 +4,7 @@ use std::path::MAIN_SEPARATOR;
 
 use directories::BaseDirs;
 
-use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix, detect_browser_version};
+use selenium_manager::{BrowserManager, CACHE_FOLDER, detect_browser_version};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -76,5 +76,12 @@ impl BrowserManager for ChromeManager {
             .join(self.driver_name)
             .join(arch_folder)
             .join(driver_version)
+    }
+}
+
+fn get_m1_prefix(arch: &str) -> &str {
+    match arch {
+        "aarch64" => "_m1",
+        _ => "",
     }
 }

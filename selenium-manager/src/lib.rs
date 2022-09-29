@@ -103,13 +103,6 @@ pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
     out_path
 }
 
-pub fn get_m1_prefix(arch: &str) -> &str {
-    match arch {
-        "aarch64" => "_m1",
-        _ => "",
-    }
-}
-
 pub fn run_shell_command(command: &str, args: [&str; 2]) -> Result<String, Box<dyn Error>> {
     log::debug!("Running {} command: {:?}",command, args);
     let output = Command::new(command)
