@@ -29,9 +29,9 @@ pub trait BrowserManager {
     fn get_driver_path_in_cache(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
 
     fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
-        let driver_url = Self::get_driver_url(&self, &driver_version, os, arch);
+        let driver_url = Self::get_driver_url(self, driver_version, os, arch);
         let (_tmp_folder, driver_zip_file) = download_to_tmp_folder(driver_url)?;
-        let driver_path_in_cache = Self::get_driver_path_in_cache(&self, &driver_version, &os, &arch);
+        let driver_path_in_cache = Self::get_driver_path_in_cache(self, driver_version, os, arch);
         let driver_path = unzip(driver_zip_file, driver_path_in_cache);
         Ok(driver_path)
     }
@@ -73,7 +73,7 @@ pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
     for i in 0..archive.len() {
         let mut file = archive.by_index(i).unwrap();
         out_path = match file.enclosed_name() {
-            Some(path) => target.join(path.to_owned()),
+            Some(path) => target.join(path),
             None => continue,
         };
         if (file.name()).ends_with('/') {
@@ -123,7 +123,7 @@ pub fn parse_version(version_text: String) -> String {
 
 pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
     for arg in args.iter() {
-        let output = match run_shell_command(&shell, flag, *arg) {
+        let output = match run_shell_command(shell, flag, *arg) {
             Ok(out) => out,
             Err(_e) => continue,
         };
@@ -133,17 +133,17 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
         }
         log::debug!("Your {} version is {}", browser_name, browser_version);
 
-        let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
+        let browser_version_vec: Vec<&str> = browser_version.split('.').collect();
 
         // TODO write metadata
 
-        return Ok(browser_version_vec.get(0).unwrap().to_string());
+        return Ok(browser_version_vec.first().unwrap().to_string());
     }
     Err(format!("{} not found", browser_name))
 }
 
 pub fn create_driver_path(driver_name: &str, arch_folder: &str, driver_version: &String) -> PathBuf {
-    let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
+    let cache_folder = String::from(CACHE_FOLDER).replace('/', &*String::from(MAIN_SEPARATOR));
     let base_dirs = BaseDirs::new().unwrap();
     Path::new(base_dirs.home_dir())
         .join(cache_folder)

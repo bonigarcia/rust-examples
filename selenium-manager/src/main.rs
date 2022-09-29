@@ -42,7 +42,7 @@ struct Cli {
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     setup_logging(&cli);
-    let browser_type: String = String::from(cli.browser);
+    let browser_type: String = cli.browser;
     let os = OS;
     let arch = ARCH;
     let browser_manager: Box<dyn BrowserManager>;
@@ -55,17 +55,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut browser_version = cli.version;
     if browser_version.is_empty() {
-        browser_version = browser_manager.get_browser_version(&os)?;
+        browser_version = browser_manager.get_browser_version(os)?;
         log::debug!("The major version of your local {} is {}", browser_type, browser_version);
     }
     let driver_version = browser_manager.get_driver_version(&browser_version)?;
     log::debug!("You need to use {} {}", browser_manager.get_driver_name(), driver_version);
 
-    let mut driver_path = browser_manager.get_driver_path_in_cache(&driver_version, &os, &arch);
+    let mut driver_path = browser_manager.get_driver_path_in_cache(&driver_version, os, arch);
     if driver_path.exists() {
         log::debug!("{} {} is already in the cache", browser_manager.get_driver_name(), driver_version);
     } else {
-        driver_path = browser_manager.download_driver(&driver_version, &os, &arch)?;
+        driver_path = browser_manager.download_driver(&driver_version, os, arch)?;
     }
     log::info!("{}", driver_path.display());
 

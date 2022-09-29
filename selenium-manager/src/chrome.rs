@@ -75,6 +75,6 @@ impl BrowserManager for ChromeManager {
         if os.eq("macos") && arch.eq("aarch64") {
             arch_folder = "mac-arm64";
         }
-        create_driver_path(self.driver_name, &arch_folder, &driver_version)
+        create_driver_path(self.driver_name, arch_folder, driver_version)
     }
 }
