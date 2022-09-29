@@ -27,6 +27,7 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_browser_version(&self, os: &str) -> Result<String, String> {
+        // TODO read metadata
         let (shell, flag, args) = match os {
             "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
                                             r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
@@ -44,8 +45,11 @@ impl BrowserManager for ChromeManager {
 
     #[tokio::main]
     async fn get_driver_version(&self, browser_version: &String) -> Result<String, Box<dyn Error>> {
+        // TODO read metadata
         let driver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, browser_version);
         let driver_version = reqwest::get(driver_url).await?.text().await?;
+
+        // TODO write metadata
 
         Ok(driver_version)
     }

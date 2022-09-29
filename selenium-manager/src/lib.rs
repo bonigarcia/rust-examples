@@ -133,6 +133,9 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
         log::debug!("Your {} version is {}", browser_name, browser_version);
 
         let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
+
+        // TODO write metadata
+
         return Ok(browser_version_vec.get(0).unwrap().to_string());
     }
     Err(format!("{} not found", browser_name))
