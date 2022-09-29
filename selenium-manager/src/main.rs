@@ -37,19 +37,16 @@ struct Cli {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-
     setup_logging(&cli);
-
-    let browser_type: String = String::from(cli.browser).to_lowercase();
+    let browser_type: String = String::from(cli.browser);
     let os = OS;
     let arch = ARCH;
     let browser_manager: Box<dyn BrowserManager>;
 
-    if browser_type.eq("chrome") {
+    if browser_type.eq_ignore_ascii_case("chrome") {
         browser_manager = ChromeManager::new();
     } else {
-        log::error!("{} is not unknown", browser_type);
-        return Err("Browser not supported")?;
+        return Err(format!("Browser {} not supported", browser_type))?;
     }
 
     let mut browser_version = cli.version;
@@ -63,8 +60,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut driver_path = browser_manager.get_cache_path(&driver_version, &os, &arch);
     if driver_path.exists() {
         log::debug!("The driver is already in the cache");
-    }
-    else {
+    } else {
         driver_path = browser_manager.download_driver(&driver_version, &os, &arch)?;
     }
     log::info!("{}", driver_path.display());
