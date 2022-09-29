@@ -180,7 +180,7 @@ dependencies = [
  "atty",
  "bitflags",
  "clap_derive 3.2.18",
- "clap_lex",
+ "clap_lex 0.2.4",
  "indexmap",
  "once_cell",
  "strsim",
@@ -189,12 +189,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "clap-verbosity-flag"
-version = "1.0.1"
+name = "clap"
+version = "4.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0636f9c040082f8e161555a305f8cec1a1c2828b3d981c812b8c39f4ac00c42c"
+checksum = "31c9484ccdc4cb8e7b117cbd0eb150c7c0f04464854e4679aeb50ef03b32d003"
 dependencies = [
- "clap",
+ "bitflags",
+ "clap_derive 4.0.1",
+ "clap_lex 0.3.0",
+ "once_cell",
+]
+
+[[package]]
+name = "clap-verbosity-flag"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23e2b6c3dcdb73299f48ae05b294da14e2f560b3ed2c09e742269eb1b22af231"
+dependencies = [
+ "clap 4.0.2",
  "log",
 ]
 
@@ -203,7 +215,7 @@ name = "clap_cli"
 version = "0.1.0"
 dependencies = [
  "assert_cmd",
- "clap",
+ "clap 3.2.22",
  "exitcode",
 ]
 
@@ -212,7 +224,7 @@ name = "clap_derive"
 version = "0.1.0"
 dependencies = [
  "assert_cmd",
- "clap",
+ "clap 3.2.22",
  "env_logger",
  "exitcode",
  "log",
@@ -232,6 +244,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_derive"
+version = "4.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca689d7434ce44517a12a89456b2be4d1ea1cafcd8f581978c03d45f5a5c12a7"
+dependencies = [
+ "heck",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "clap_lex"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -241,10 +266,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_lex"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d4198f73e42b4936b35b5bb248d81d2b595ecb170da0bac7655c54eedfa8da8"
+dependencies = [
+ "os_str_bytes",
+]
+
+[[package]]
 name = "clap_verbosity"
 version = "0.1.0"
 dependencies = [
- "clap",
+ "clap 3.2.22",
  "clap-verbosity-flag",
  "env_logger",
  "exitcode",
@@ -1316,7 +1350,7 @@ name = "selenium-manager"
 version = "0.1.0"
 dependencies = [
  "assert_cmd",
- "clap",
+ "clap 3.2.22",
  "directories 4.0.1",
  "env_logger",
  "exitcode",
