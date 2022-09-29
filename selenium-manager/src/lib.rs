@@ -28,12 +28,12 @@ pub trait BrowserManager {
 
     fn get_driver_path_in_cache(&self, driver_version: &str, os: &str, arch: &str) -> PathBuf;
 
-    fn download_driver(&self, driver_version: &str, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
+    fn download_driver(&self, driver_version: &str, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
         let driver_url = Self::get_driver_url(self, driver_version, os, arch);
         let (_tmp_folder, driver_zip_file) = download_to_tmp_folder(driver_url)?;
         let driver_path_in_cache = Self::get_driver_path_in_cache(self, driver_version, os, arch);
-        let driver_path = unzip(driver_zip_file, driver_path_in_cache);
-        Ok(driver_path)
+        unzip(driver_zip_file, driver_path_in_cache);
+        Ok(())
     }
 }
 
@@ -65,27 +65,22 @@ pub async fn download_to_tmp_folder(url: String) -> Result<(TempDir, String), Bo
     Ok((tmp_dir, target_path))
 }
 
-pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
+pub fn unzip(zip_file: String, target: PathBuf) {
     let file = File::open(zip_file).unwrap();
     let mut archive = ZipArchive::new(file).unwrap();
 
-    let mut out_path = Default::default();
     for i in 0..archive.len() {
         let mut file = archive.by_index(i).unwrap();
-        out_path = match file.enclosed_name() {
-            Some(path) => target.join(path),
-            None => continue,
-        };
         if (file.name()).ends_with('/') {
-            fs::create_dir_all(&out_path).unwrap();
+            fs::create_dir_all(&target).unwrap();
         } else {
-            log::debug!("File extracted to {} ({} bytes)", out_path.display(), file.size());
-            if let Some(p) = out_path.parent() {
+            log::debug!("File extracted to {} ({} bytes)", target.display(), file.size());
+            if let Some(p) = target.parent() {
                 if !p.exists() {
                     fs::create_dir_all(&p).unwrap();
                 }
             }
-            let mut outfile = File::create(&out_path).unwrap();
+            let mut outfile = File::create(&target).unwrap();
 
             // Set permissions in Unix-like systems
             #[cfg(unix)]
@@ -102,8 +97,6 @@ pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
             break;
         }
     }
-
-    out_path
 }
 
 pub fn run_shell_command(command: &str, flag: &str, args: &str) -> Result<String, Box<dyn Error>> {
@@ -142,7 +135,7 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
     Err(format!("{} not found", browser_name))
 }
 
-pub fn create_driver_path(driver_name: &str, arch_folder: &str, driver_version: &str) -> PathBuf {
+pub fn create_driver_path(driver_name: &str, os: &str, arch_folder: &str, driver_version: &str) -> PathBuf {
     let cache_folder = String::from(CACHE_FOLDER).replace('/', &*String::from(MAIN_SEPARATOR));
     let base_dirs = BaseDirs::new().unwrap();
     Path::new(base_dirs.home_dir())
@@ -150,4 +143,16 @@ pub fn create_driver_path(driver_name: &str, arch_folder: &str, driver_version: 
         .join(driver_name)
         .join(arch_folder)
         .join(driver_version)
+        .join(get_driver_filename(driver_name, os))
+}
+
+pub fn get_driver_filename(driver_name: &str, os: &str) -> String {
+    format!("{}{}", driver_name, get_binary_extension(&os))
+}
+
+pub fn get_binary_extension(os: &str) -> &str {
+    match os {
+        "windows" => ".exe",
+        _ => "",
+    }
 }

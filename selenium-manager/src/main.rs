@@ -59,11 +59,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     let driver_version = browser_manager.get_driver_version(&browser_version)?;
     log::debug!("You need to use {} {}", browser_manager.get_driver_name(), driver_version);
 
-    let mut driver_path = browser_manager.get_driver_path_in_cache(&driver_version, os, arch);
+    let driver_path = browser_manager.get_driver_path_in_cache(&driver_version, os, arch);
     if driver_path.exists() {
         log::debug!("{} {} is already in the cache", browser_manager.get_driver_name(), driver_version);
     } else {
-        driver_path = browser_manager.download_driver(&driver_version, os, arch)?;
+        browser_manager.download_driver(&driver_version, os, arch)?;
     }
     log::info!("{}", driver_path.display());
 
