@@ -18,7 +18,7 @@ pub trait BrowserManager {
 
     fn get_driver_name(&self) -> &str;
 
-    fn get_browser_version(&self, os: &str) -> String;
+    fn get_browser_version(&self, os: &str) -> Result<String, String>;
 
     fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String;
 
@@ -110,21 +110,19 @@ pub fn get_m1_prefix(arch: &str) -> &str {
     }
 }
 
-pub fn run_shell_command(os: &str, args: [&str; 2]) -> String {
+pub fn run_shell_command(os: &str, args: [&str; 2]) -> Result<String, Box<dyn Error>> {
     let command = match os {
         "windows" => "cmd",
         _ => "sh"
     };
-
     log::debug!("Running shell command: {:?}", args);
 
     let output = Command::new(command)
         .args(args)
-        .output()
-        .expect("Command failed to start");
+        .output()?;
     log::debug!("{:?}", output);
 
-    String::from_utf8_lossy(&output.stdout).to_string()
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 pub fn parse_version(version_text: String) -> String {
