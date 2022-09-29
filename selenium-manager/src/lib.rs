@@ -110,7 +110,12 @@ pub fn get_m1_prefix(arch: &str) -> &str {
     }
 }
 
-pub fn run_shell_command(command: &str, args: [&str; 2]) -> String {
+pub fn run_shell_command(os: &str, args: [&str; 2]) -> String {
+    let command = match os {
+        "windows" => "cmd",
+        _ => "sh"
+    };
+
     log::debug!("Running shell command: {:?}", args);
 
     let output = Command::new(command)

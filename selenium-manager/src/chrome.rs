@@ -34,17 +34,13 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_browser_version(&self, os: &str) -> String {
-        let command = match os {
-            "windows" => "cmd",
-            _ => "sh"
-        };
         let args = match os {
             "windows" => ["/C", r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#],
             "macos" => ["-c", r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
             _ => ["-c", "google-chrome --version"],
         };
 
-        let output = run_shell_command(command, args);
+        let output = run_shell_command(&os, args);
         let browser_version = parse_version(output);
         log::debug!("Your browser version is {}", browser_version);
 
