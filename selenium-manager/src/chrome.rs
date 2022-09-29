@@ -6,7 +6,7 @@ use std::process::Command;
 use directories::BaseDirs;
 use regex::Regex;
 
-use selenium_manager::{BrowserManager, CACHE_FOLDER, download_file, get_m1_prefix, unzip};
+use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -78,15 +78,6 @@ impl BrowserManager for ChromeManager {
         let driver_version = reqwest::get(driver_url).await?.text().await?;
 
         Ok(driver_version)
-    }
-
-    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
-        let url = Self::get_driver_url(&self, &driver_version, os, arch);
-        let (_tmp_dir, target_path) = download_file(url)?;
-
-        let cache = Self::get_cache_path(&self, &driver_version, &os, &arch);
-        let driver_path = unzip(target_path, cache);
-        Ok(driver_path)
     }
 
     fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf {

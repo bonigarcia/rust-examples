@@ -22,9 +22,15 @@ pub trait BrowserManager {
 
     fn get_driver_version(&self, browser_version: &String) -> Result<String, Box<dyn Error>>;
 
-    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>>;
-
     fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
+
+    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
+        let url = Self::get_driver_url(&self, &driver_version, os, arch);
+        let (_tmp_dir, target_path) = download_file(url)?;
+        let cache_path = Self::get_cache_path(&self, &driver_version, &os, &arch);
+        let driver_path = unzip(target_path, cache_path);
+        Ok(driver_path)
+    }
 }
 
 pub fn get_m1_prefix(arch: &str) -> &str {
