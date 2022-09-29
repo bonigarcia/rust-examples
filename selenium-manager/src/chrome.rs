@@ -55,7 +55,10 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {
-        let m1 = get_m1_prefix(&arch);
+        let m1 = match arch {
+            "aarch64" => "_m1",
+            _ => "",
+        };
         match os {
             "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
             "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, self.driver_name, m1),
@@ -64,19 +67,14 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_driver_path_in_cache(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf {
-        let m1 = get_m1_prefix(&arch);
-        let arch_folder = match os {
-            "windows" => String::from("win32"),
-            "macos" => format!("mac64{}", m1),
-            _ => String::from("linux64")
+        let mut arch_folder = match os {
+            "windows" => "win32",
+            "macos" => "mac64",
+            _ => "linux64",
         };
+        if os.eq("macos") && arch.eq("aarch64") {
+            arch_folder = "mac-arm64";
+        }
         create_driver_path(self.driver_name, &arch_folder, &driver_version)
-    }
-}
-
-fn get_m1_prefix(arch: &str) -> &str {
-    match arch {
-        "aarch64" => "_m1",
-        _ => "",
     }
 }

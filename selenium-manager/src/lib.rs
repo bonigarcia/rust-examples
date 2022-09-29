@@ -141,7 +141,7 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
     Err(format!("{} not found", browser_name))
 }
 
-pub fn create_driver_path(driver_name: &str, arch_folder: &String, driver_version: &String) -> PathBuf {
+pub fn create_driver_path(driver_name: &str, arch_folder: &str, driver_version: &String) -> PathBuf {
     let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
     let base_dirs = BaseDirs::new().unwrap();
     Path::new(base_dirs.home_dir())
