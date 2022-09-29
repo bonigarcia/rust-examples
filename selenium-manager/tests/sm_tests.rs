@@ -3,11 +3,12 @@ use assert_cmd::Command;
 use rstest::rstest;
 
 #[rstest]
-#[case("105", "105.0.5195.52")]
-#[case("106", "106.0.5249.61")]
-fn test_browser_manager(#[case] browser_version: String, #[case] driver_version: String) {
+#[case("chrome", "", "")]
+#[case("chrome", "105", "105.0.5195.52")]
+#[case("chrome", "106", "106.0.5249.61")]
+fn test_browser_manager(#[case] browser: String, #[case] browser_version: String, #[case] driver_version: String) {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap();
-    cmd.args(["--browser", "chrome", "--version", &browser_version])
+    cmd.args(["--browser", &browser, "--version", &browser_version])
         .assert()
         .success()
         .code(0);
@@ -20,5 +21,9 @@ fn test_browser_manager(#[case] browser_version: String, #[case] driver_version:
 
     println!("{}", output);
 
-    assert!(output.contains(&driver_version));
+    assert!(output.contains(&browser));
+    if !browser_version.is_empty() {
+        assert!(output.contains(&driver_version));
+    }
+
 }
