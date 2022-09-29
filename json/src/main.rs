@@ -21,9 +21,8 @@ struct Browsers {
 
 fn main() -> Result<()> {
     let now = OffsetDateTime::now_utc();
-    //let dt: DateTime<Utc> = now.clone().into();
 
-    println!("Now is {} ", now.to_string());
+    println!("Now is {}, which is {}", now.to_string(), now.unix_timestamp());
 
     let data = r#"
 {
@@ -31,18 +30,18 @@ fn main() -> Result<()> {
     {
       "browser_name": "chrome",
       "browser_version": "105",
-      "browser_version_ttl": 1546300800,
+      "browser_version_ttl": 1664459382,
       "driver_name": "chromedriver",
       "driver_version": "105.0.5195.52",
-      "driver_version_ttl": 1586300800
+      "driver_version_ttl": 1664459382
     },
     {
       "browser_name": "firefox",
       "browser_version": "104",
-      "browser_version_ttl": 1546300800,
+      "browser_version_ttl": 1664459382,
       "driver_name": "geckodriver",
       "driver_version": "0.31.0",
-      "driver_version_ttl": 1586300800
+      "driver_version_ttl": 1664459382
     }
   ]
 }
