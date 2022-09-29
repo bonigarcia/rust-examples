@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-use selenium_manager::{BrowserManager, detect_browser_major_version, get_driver_path_in_cache};
+use selenium_manager::{BrowserManager, detect_browser_major_version, create_driver_path};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -26,10 +26,6 @@ impl BrowserManager for ChromeManager {
         self.browser_name
     }
 
-    fn get_driver_name(&self) -> &str {
-        self.driver_name
-    }
-
     fn get_browser_version(&self, os: &str) -> Result<String, String> {
         let (shell, flag, args) = match os {
             "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
@@ -42,13 +38,8 @@ impl BrowserManager for ChromeManager {
         detect_browser_major_version(self.browser_name, shell, flag, args)
     }
 
-    fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {
-        let m1 = get_m1_prefix(&arch);
-        match os {
-            "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
-            "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, self.driver_name, m1),
-            _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
-        }
+    fn get_driver_name(&self) -> &str {
+        self.driver_name
     }
 
     #[tokio::main]
@@ -59,14 +50,23 @@ impl BrowserManager for ChromeManager {
         Ok(driver_version)
     }
 
-    fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf {
+    fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {
+        let m1 = get_m1_prefix(&arch);
+        match os {
+            "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
+            "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, self.driver_name, m1),
+            _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
+        }
+    }
+
+    fn get_driver_path_in_cache(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf {
         let m1 = get_m1_prefix(&arch);
         let arch_folder = match os {
             "windows" => String::from("win32"),
             "macos" => format!("mac64{}", m1),
             _ => String::from("linux64")
         };
-        get_driver_path_in_cache(self.driver_name, &arch_folder, &driver_version)
+        create_driver_path(self.driver_name, &arch_folder, &driver_version)
     }
 }
 

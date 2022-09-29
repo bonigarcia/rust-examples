@@ -18,21 +18,21 @@ pub const CACHE_FOLDER: &str = ".cache/selenium";
 pub trait BrowserManager {
     fn get_browser_name(&self) -> &str;
 
-    fn get_driver_name(&self) -> &str;
-
     fn get_browser_version(&self, os: &str) -> Result<String, String>;
 
-    fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String;
+    fn get_driver_name(&self) -> &str;
 
     fn get_driver_version(&self, browser_version: &String) -> Result<String, Box<dyn Error>>;
 
-    fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
+    fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String;
+
+    fn get_driver_path_in_cache(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
 
     fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
         let driver_url = Self::get_driver_url(&self, &driver_version, os, arch);
-        let (_tmp_folder, tmp_file) = download_to_tmp_folder(driver_url)?;
-        let target_path = Self::get_cache_path(&self, &driver_version, &os, &arch);
-        let driver_path = unzip(tmp_file, target_path);
+        let (_tmp_folder, driver_zip_file) = download_to_tmp_folder(driver_url)?;
+        let driver_path_in_cache = Self::get_driver_path_in_cache(&self, &driver_version, &os, &arch);
+        let driver_path = unzip(driver_zip_file, driver_path_in_cache);
         Ok(driver_path)
     }
 }
@@ -138,7 +138,7 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
     Err(format!("{} not found", browser_name))
 }
 
-pub fn get_driver_path_in_cache(driver_name: &str, arch_folder: &String, driver_version: &String) -> PathBuf {
+pub fn create_driver_path(driver_name: &str, arch_folder: &String, driver_version: &String) -> PathBuf {
     let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
     let base_dirs = BaseDirs::new().unwrap();
     Path::new(base_dirs.home_dir())
