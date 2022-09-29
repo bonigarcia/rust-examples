@@ -103,10 +103,10 @@ pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
     out_path
 }
 
-pub fn run_shell_command(command: &str, args: [&str; 2]) -> Result<String, Box<dyn Error>> {
+pub fn run_shell_command(command: &str, flag: &str, args: &str) -> Result<String, Box<dyn Error>> {
     log::debug!("Running {} command: {:?}",command, args);
     let output = Command::new(command)
-        .args(args)
+        .args([flag, args])
         .output()?;
     log::debug!("{:?}", output);
 
@@ -120,7 +120,7 @@ pub fn parse_version(version_text: String) -> String {
 
 pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
     for arg in args.iter() {
-        let output = match run_shell_command(&shell, [flag, *arg]) {
+        let output = match run_shell_command(&shell, flag, *arg) {
             Ok(out) => out,
             Err(_e) => continue,
         };
