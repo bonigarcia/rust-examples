@@ -5,7 +5,9 @@ use std::io;
 use std::io::copy;
 use std::io::Cursor;
 use std::path::PathBuf;
+use std::process::Command;
 
+use regex::Regex;
 use tempfile::{Builder, TempDir};
 use zip::ZipArchive;
 
@@ -30,13 +32,6 @@ pub trait BrowserManager {
         let cache_path = Self::get_cache_path(&self, &driver_version, &os, &arch);
         let driver_path = unzip(target_path, cache_path);
         Ok(driver_path)
-    }
-}
-
-pub fn get_m1_prefix(arch: &str) -> &str {
-    match arch {
-        "aarch64" => "_m1",
-        _ => "",
     }
 }
 
@@ -106,4 +101,28 @@ pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
     }
 
     out_path
+}
+
+pub fn get_m1_prefix(arch: &str) -> &str {
+    match arch {
+        "aarch64" => "_m1",
+        _ => "",
+    }
+}
+
+pub fn run_shell_command(command: &str, args: [&str; 2]) -> String {
+    log::debug!("Running shell command: {:?}", args);
+
+    let output = Command::new(command)
+        .args(args)
+        .output()
+        .expect("Command failed to start");
+    log::debug!("{:?}", output);
+
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+pub fn parse_version(version_text: String) -> String {
+    let re = Regex::new(r"[^\d^.]").unwrap();
+    re.replace_all(&*version_text, "").to_string()
 }

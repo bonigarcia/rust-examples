@@ -1,12 +1,10 @@
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::path::MAIN_SEPARATOR;
-use std::process::Command;
 
 use directories::BaseDirs;
-use regex::Regex;
 
-use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix};
+use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix, parse_version, run_shell_command};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -45,18 +43,9 @@ impl BrowserManager for ChromeManager {
             "macos" => ["-c", r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#],
             _ => ["-c", "google-chrome --version"],
         };
-        log::debug!("Running shell command: {:?}", args);
 
-        let output = Command::new(command)
-            .args(args)
-            .output()
-            .expect("command failed to start");
-        log::debug!("{:?}", output);
-
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        let re = Regex::new(r"[^\d^.]").unwrap();
-
-        let browser_version = re.replace_all(&*stdout, "").to_string();
+        let output = run_shell_command(command, args);
+        let browser_version = parse_version(output);
         log::debug!("Your browser version is {}", browser_version);
 
         let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
