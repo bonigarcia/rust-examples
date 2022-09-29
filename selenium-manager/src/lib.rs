@@ -118,7 +118,7 @@ pub fn parse_version(version_text: String) -> String {
     re.replace_all(&*version_text, "").to_string()
 }
 
-pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
+pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
     for arg in args.iter() {
         let output = match run_shell_command(&shell, [flag, *arg]) {
             Ok(out) => out,
