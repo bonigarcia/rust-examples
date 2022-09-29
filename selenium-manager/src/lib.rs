@@ -27,16 +27,16 @@ pub trait BrowserManager {
     fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
 
     fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
-        let url = Self::get_driver_url(&self, &driver_version, os, arch);
-        let (_tmp_dir, target_path) = download_file(url)?;
-        let cache_path = Self::get_cache_path(&self, &driver_version, &os, &arch);
-        let driver_path = unzip(target_path, cache_path);
+        let driver_url = Self::get_driver_url(&self, &driver_version, os, arch);
+        let (_tmp_folder, tmp_file) = download_to_tmp_folder(driver_url)?;
+        let target_path = Self::get_cache_path(&self, &driver_version, &os, &arch);
+        let driver_path = unzip(tmp_file, target_path);
         Ok(driver_path)
     }
 }
 
 #[tokio::main]
-pub async fn download_file(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
+pub async fn download_to_tmp_folder(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
     let tmp_dir = Builder::new().prefix("selenium-manager").tempdir()?;
     log::debug!("Downloading {} to temporal folder {:?}", url, tmp_dir.path());
 
