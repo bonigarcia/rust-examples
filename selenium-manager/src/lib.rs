@@ -87,18 +87,19 @@ pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
             }
             let mut outfile = File::create(&out_path).unwrap();
 
-            io::copy(&mut file, &mut outfile).unwrap();
-            break;
-        }
+            // Set permissions in Unix-like systems
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
 
-        // Get and Set permissions
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-
-            if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&out_path, fs::Permissions::from_mode(mode)).unwrap();
+                if let Some(mode) = file.unix_mode() {
+                    fs::set_permissions(&out_path, fs::Permissions::from_mode(mode)).unwrap();
+                }
             }
+
+            io::copy(&mut file, &mut outfile).unwrap();
+
+            break;
         }
     }
 
