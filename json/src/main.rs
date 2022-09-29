@@ -1,3 +1,5 @@
+use std::ops::Add;
+use std::time::Duration;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use time::OffsetDateTime;
@@ -18,6 +20,9 @@ struct Browser {
 struct Browsers {
     browsers: Vec<Browser>,
 }
+
+const TTL_BROWSERS: u64 = 3600;
+const TTL_DRIVERS: u64 = 86400;
 
 fn main() -> Result<()> {
     let now = OffsetDateTime::now_utc();
@@ -47,10 +52,18 @@ fn main() -> Result<()> {
 }
 "#;
 
-    let metadata: Browsers = serde_json::from_str(data)?;
+    let mut metadata: Browsers = serde_json::from_str(data)?;
 
     println!("{} {} {}", metadata.browsers[0].browser_name, metadata.browsers[0].browser_version, metadata.browsers[0].browser_version_ttl);
     println!("{} {} {}", metadata.browsers[0].driver_name, metadata.browsers[0].driver_version, metadata.browsers[0].driver_version_ttl);
+
+    metadata.browsers[0].browser_version_ttl = metadata.browsers[0].browser_version_ttl.add(Duration::from_secs(TTL_BROWSERS));
+    metadata.browsers[0].driver_version_ttl = metadata.browsers[0].driver_version_ttl.add(Duration::from_secs(TTL_DRIVERS));
+
+    println!("{} {} {}", metadata.browsers[0].browser_name, metadata.browsers[0].browser_version, metadata.browsers[0].browser_version_ttl);
+    println!("{} {} {}", metadata.browsers[0].driver_name, metadata.browsers[0].driver_version, metadata.browsers[0].driver_version_ttl);
+
+    std::fs::write("out.json", serde_json::to_string_pretty(&metadata).unwrap()).unwrap();
 
     Ok(())
 }
