@@ -15,7 +15,7 @@ use crate::chrome::ChromeManager;
 
 /// Selenium-Manager: Automated driver management for Selenium
 #[derive(Parser, Debug)]
-#[clap(version, about, long_about = None)]
+#[clap(about, long_about = None)]
 struct Cli {
     /// Browser type (e.g., chrome, firefox, edge)
     #[clap(short, long, value_parser)]
