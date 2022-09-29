@@ -18,7 +18,6 @@ fn cli_test(#[case] browser: String, #[case] browser_version: String, #[case] dr
         Ok(v) => v,
         Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
     };
-
     println!("{}", output);
 
     assert!(output.contains(&browser));

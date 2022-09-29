@@ -1,10 +1,7 @@
 use std::error::Error;
-use std::path::{Path, PathBuf};
-use std::path::MAIN_SEPARATOR;
+use std::path::PathBuf;
 
-use directories::BaseDirs;
-
-use selenium_manager::{BrowserManager, CACHE_FOLDER, detect_browser_major_version};
+use selenium_manager::{BrowserManager, detect_browser_major_version, get_driver_path_in_cache};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -69,13 +66,7 @@ impl BrowserManager for ChromeManager {
             "macos" => format!("mac64{}", m1),
             _ => String::from("linux64")
         };
-        let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
-        let base_dirs = BaseDirs::new().unwrap();
-        Path::new(base_dirs.home_dir())
-            .join(cache_folder)
-            .join(self.driver_name)
-            .join(arch_folder)
-            .join(driver_version)
+        get_driver_path_in_cache(self.driver_name, &arch_folder, &driver_version)
     }
 }
 

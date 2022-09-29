@@ -4,9 +4,11 @@ use std::fs::File;
 use std::io;
 use std::io::copy;
 use std::io::Cursor;
-use std::path::PathBuf;
+use std::path::MAIN_SEPARATOR;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use directories::BaseDirs;
 use regex::Regex;
 use tempfile::{Builder, TempDir};
 use zip::ZipArchive;
@@ -134,4 +136,14 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
         return Ok(browser_version_vec.get(0).unwrap().to_string());
     }
     Err(format!("{} not found", browser_name))
+}
+
+pub fn get_driver_path_in_cache(driver_name: &str, arch_folder: &String, driver_version: &String) -> PathBuf {
+    let cache_folder = String::from(CACHE_FOLDER).replace("/", &*String::from(MAIN_SEPARATOR));
+    let base_dirs = BaseDirs::new().unwrap();
+    Path::new(base_dirs.home_dir())
+        .join(cache_folder)
+        .join(driver_name)
+        .join(arch_folder)
+        .join(driver_version)
 }
