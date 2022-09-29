@@ -1,5 +1,8 @@
+use std::fs::File;
+use std::io::Read;
 use std::ops::Add;
 use std::time::Duration;
+
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use time::OffsetDateTime;
@@ -17,7 +20,7 @@ struct Browser {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Browsers {
+struct Metadata {
     browsers: Vec<Browser>,
 }
 
@@ -52,7 +55,7 @@ fn main() -> Result<()> {
 }
 "#;
 
-    let mut metadata: Browsers = serde_json::from_str(data)?;
+    let mut metadata: Metadata = serde_json::from_str(data)?;
 
     println!("{} {} {}", metadata.browsers[0].browser_name, metadata.browsers[0].browser_version, metadata.browsers[0].browser_version_ttl);
     println!("{} {} {}", metadata.browsers[0].driver_name, metadata.browsers[0].driver_version, metadata.browsers[0].driver_version_ttl);
@@ -60,10 +63,18 @@ fn main() -> Result<()> {
     metadata.browsers[0].browser_version_ttl = metadata.browsers[0].browser_version_ttl.add(Duration::from_secs(TTL_BROWSERS));
     metadata.browsers[0].driver_version_ttl = metadata.browsers[0].driver_version_ttl.add(Duration::from_secs(TTL_DRIVERS));
 
-    println!("{} {} {}", metadata.browsers[0].browser_name, metadata.browsers[0].browser_version, metadata.browsers[0].browser_version_ttl);
-    println!("{} {} {}", metadata.browsers[0].driver_name, metadata.browsers[0].driver_version, metadata.browsers[0].driver_version_ttl);
+    // Write to file
+    let filename = "out.json";
+    std::fs::write(&filename, serde_json::to_string_pretty(&metadata).unwrap()).unwrap();
 
-    std::fs::write("out.json", serde_json::to_string_pretty(&metadata).unwrap()).unwrap();
+    // Read file
+    let mut file = File::open(&filename).unwrap();
+    let mut data = String::new();
+    file.read_to_string(&mut data).unwrap();
+    let  metadata2: Metadata = serde_json::from_str(&data)?;
+
+    println!("{} {} {}", metadata2.browsers[0].browser_name, metadata2.browsers[0].browser_version, metadata2.browsers[0].browser_version_ttl);
+    println!("{} {} {}", metadata2.browsers[0].driver_name, metadata2.browsers[0].driver_version, metadata2.browsers[0].driver_version_ttl);
 
     Ok(())
 }
