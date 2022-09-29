@@ -15,5 +15,6 @@ members = [
     "shell",
     "download",
     "selenium-manager",
-    "traits"
+    "traits",
+    "json",
 ]
