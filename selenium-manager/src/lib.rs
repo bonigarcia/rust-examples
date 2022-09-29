@@ -22,13 +22,13 @@ pub trait BrowserManager {
 
     fn get_driver_name(&self) -> &str;
 
-    fn get_driver_version(&self, browser_version: &String) -> Result<String, Box<dyn Error>>;
+    fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>>;
 
-    fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String;
+    fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String;
 
-    fn get_driver_path_in_cache(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
+    fn get_driver_path_in_cache(&self, driver_version: &str, os: &str, arch: &str) -> PathBuf;
 
-    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
+    fn download_driver(&self, driver_version: &str, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
         let driver_url = Self::get_driver_url(self, driver_version, os, arch);
         let (_tmp_folder, driver_zip_file) = download_to_tmp_folder(driver_url)?;
         let driver_path_in_cache = Self::get_driver_path_in_cache(self, driver_version, os, arch);
@@ -142,7 +142,7 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
     Err(format!("{} not found", browser_name))
 }
 
-pub fn create_driver_path(driver_name: &str, arch_folder: &str, driver_version: &String) -> PathBuf {
+pub fn create_driver_path(driver_name: &str, arch_folder: &str, driver_version: &str) -> PathBuf {
     let cache_folder = String::from(CACHE_FOLDER).replace('/', &*String::from(MAIN_SEPARATOR));
     let base_dirs = BaseDirs::new().unwrap();
     Path::new(base_dirs.home_dir())

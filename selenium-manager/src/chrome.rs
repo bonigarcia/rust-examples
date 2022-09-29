@@ -44,7 +44,7 @@ impl BrowserManager for ChromeManager {
     }
 
     #[tokio::main]
-    async fn get_driver_version(&self, browser_version: &String) -> Result<String, Box<dyn Error>> {
+    async fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>> {
         // TODO read metadata
         let driver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, browser_version);
         let driver_version = reqwest::get(driver_url).await?.text().await?;
@@ -54,7 +54,7 @@ impl BrowserManager for ChromeManager {
         Ok(driver_version)
     }
 
-    fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {
+    fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String {
         let m1 = match arch {
             "aarch64" => "_m1",
             _ => "",
@@ -66,7 +66,7 @@ impl BrowserManager for ChromeManager {
         }
     }
 
-    fn get_driver_path_in_cache(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf {
+    fn get_driver_path_in_cache(&self, driver_version: &str, os: &str, arch: &str) -> PathBuf {
         let mut arch_folder = match os {
             "windows" => "win32",
             "macos" => "mac64",

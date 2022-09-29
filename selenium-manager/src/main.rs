@@ -45,13 +45,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     let browser_type: String = cli.browser;
     let os = OS;
     let arch = ARCH;
-    let browser_manager: Box<dyn BrowserManager>;
-
-    if browser_type.eq_ignore_ascii_case("chrome") {
-        browser_manager = ChromeManager::new();
+    let browser_manager: Box<dyn BrowserManager> = if browser_type.eq_ignore_ascii_case("chrome") {
+        ChromeManager::new()
     } else {
         return Err(format!("Browser {} not supported", browser_type))?;
-    }
+    };
 
     let mut browser_version = cli.version;
     if browser_version.is_empty() {
