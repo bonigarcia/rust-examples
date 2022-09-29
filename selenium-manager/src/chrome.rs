@@ -4,7 +4,7 @@ use std::path::MAIN_SEPARATOR;
 
 use directories::BaseDirs;
 
-use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix, run_shell_commands};
+use selenium_manager::{BrowserManager, CACHE_FOLDER, get_m1_prefix, detect_browser_version};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -42,7 +42,7 @@ impl BrowserManager for ChromeManager {
             "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
             _ => ("sh", "-c", vec!("google-chrome --version")),
         };
-        run_shell_commands(shell, flag, args)
+        detect_browser_version(self.browser_name, shell, flag, args)
     }
 
     fn get_driver_url(&self, driver_version: &String, os: &str, arch: &str) -> String {

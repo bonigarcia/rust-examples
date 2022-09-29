@@ -125,7 +125,7 @@ pub fn parse_version(version_text: String) -> String {
     re.replace_all(&*version_text, "").to_string()
 }
 
-pub fn run_shell_commands(shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
+pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
     for arg in args.iter() {
         let output = match run_shell_command(&shell, [flag, *arg]) {
             Ok(out) => out,
@@ -135,10 +135,10 @@ pub fn run_shell_commands(shell: &str, flag: &str, args: Vec<&str>) -> Result<St
         if browser_version.is_empty() {
             continue;
         }
-        log::debug!("Your browser version is {}", browser_version);
+        log::debug!("Your {} version is {}", browser_name, browser_version);
 
         let browser_version_vec: Vec<&str> = browser_version.split(".").collect();
         return Ok(browser_version_vec.get(0).unwrap().to_string());
     }
-    Err(String::from("Browser not found"))
+    Err(format!("{} not found", browser_name))
 }
