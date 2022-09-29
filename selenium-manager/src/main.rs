@@ -8,7 +8,10 @@ use env_logger::Target::Stdout;
 use log::Level;
 use log::LevelFilter::{Debug, Info, Trace};
 
-use selenium_manager::{BrowserManager, ChromeManager};
+use selenium_manager::BrowserManager;
+
+mod chrome;
+use crate::chrome::ChromeManager;
 
 /// Selenium-Manager: Automated driver management for Selenium
 #[derive(Parser, Debug)]
