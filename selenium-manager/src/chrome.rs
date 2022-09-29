@@ -80,16 +80,16 @@ impl BrowserManager for ChromeManager {
         Ok(driver_version)
     }
 
-    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>> {
+    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>> {
         let url = Self::get_driver_url(&self, &driver_version, os, arch);
         let (_tmp_dir, target_path) = download_file(url)?;
 
-        let cache = Self::get_cache_path(&self, self.driver_name, &driver_version, &os, &arch);
-        unzip(target_path, cache);
-        Ok(())
+        let cache = Self::get_cache_path(&self, &driver_version, &os, &arch);
+        let driver_path = unzip(target_path, cache);
+        Ok(driver_path)
     }
 
-    fn get_cache_path(&self, driver_name: &str, driver_version: &String, os: &str, arch: &str) -> PathBuf {
+    fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf {
         let m1 = get_m1_prefix(&arch);
         let arch_folder = match os {
             "windows" => String::from("win32"),
@@ -100,7 +100,7 @@ impl BrowserManager for ChromeManager {
         let base_dirs = BaseDirs::new().unwrap();
         Path::new(base_dirs.home_dir())
             .join(cache_folder)
-            .join(driver_name)
+            .join(self.driver_name)
             .join(arch_folder)
             .join(driver_version)
     }

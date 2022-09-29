@@ -22,9 +22,9 @@ pub trait BrowserManager {
 
     fn get_driver_version(&self, browser_version: &String) -> Result<String, Box<dyn Error>>;
 
-    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<(), Box<dyn Error>>;
+    fn download_driver(&self, driver_version: &String, os: &str, arch: &str) -> Result<PathBuf, Box<dyn Error>>;
 
-    fn get_cache_path(&self, driver_name: &str, driver_version: &String, os: &str, arch: &str) -> PathBuf;
+    fn get_cache_path(&self, driver_version: &String, os: &str, arch: &str) -> PathBuf;
 }
 
 pub fn get_m1_prefix(arch: &str) -> &str {
@@ -62,13 +62,14 @@ pub async fn download_file(url: String) -> Result<(TempDir, String), Box<dyn Err
     Ok((tmp_dir, target_path))
 }
 
-pub fn unzip(zip_file: String, target: PathBuf) {
+pub fn unzip(zip_file: String, target: PathBuf) -> PathBuf {
     let file = File::open(zip_file).unwrap();
     let mut archive = ZipArchive::new(file).unwrap();
 
+    let mut out_path = Default::default();
     for i in 0..archive.len() {
         let mut file = archive.by_index(i).unwrap();
-        let out_path = match file.enclosed_name() {
+        out_path = match file.enclosed_name() {
             Some(path) => target.join(path.to_owned()),
             None => continue,
         };
@@ -83,8 +84,8 @@ pub fn unzip(zip_file: String, target: PathBuf) {
             }
             let mut outfile = File::create(&out_path).unwrap();
 
-            log::info!("{}", out_path.display());
             io::copy(&mut file, &mut outfile).unwrap();
+            break;
         }
 
         // Get and Set permissions
@@ -97,4 +98,6 @@ pub fn unzip(zip_file: String, target: PathBuf) {
             }
         }
     }
+
+    out_path
 }
