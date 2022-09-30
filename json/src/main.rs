@@ -4,7 +4,6 @@ use std::ops::Add;
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use time::OffsetDateTime;
 
 #[derive(Serialize, Deserialize)]
@@ -27,7 +26,7 @@ struct Metadata {
 const TTL_BROWSERS: u64 = 3600;
 const TTL_DRIVERS: u64 = 86400;
 
-fn main() -> Result<()> {
+fn main() {
     let now = OffsetDateTime::now_utc();
 
     println!("Now is {}, which is {}", now.to_string(), now.unix_timestamp());
@@ -55,7 +54,7 @@ fn main() -> Result<()> {
 }
 "#;
 
-    let mut metadata: Metadata = serde_json::from_str(data)?;
+    let mut metadata: Metadata = serde_json::from_str(data).unwrap();
 
     println!("{} {} {}", metadata.browsers[0].browser_name, metadata.browsers[0].browser_version, metadata.browsers[0].browser_version_ttl);
     println!("{} {} {}", metadata.browsers[0].driver_name, metadata.browsers[0].driver_version, metadata.browsers[0].driver_version_ttl);
@@ -71,10 +70,9 @@ fn main() -> Result<()> {
     let mut file = File::open(&filename).unwrap();
     let mut data = String::new();
     file.read_to_string(&mut data).unwrap();
-    let  metadata2: Metadata = serde_json::from_str(&data)?;
+    let  metadata2: Metadata = serde_json::from_str(&data).unwrap();
 
     println!("{} {} {}", metadata2.browsers[0].browser_name, metadata2.browsers[0].browser_version, metadata2.browsers[0].browser_version_ttl);
     println!("{} {} {}", metadata2.browsers[0].driver_name, metadata2.browsers[0].driver_version, metadata2.browsers[0].driver_version_ttl);
 
-    Ok(())
 }
