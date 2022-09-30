@@ -13,6 +13,7 @@ use selenium_manager::BrowserManager;
 use crate::chrome::ChromeManager;
 
 mod chrome;
+mod metadata;
 
 /// Automated driver management for Selenium
 #[derive(Parser, Debug)]

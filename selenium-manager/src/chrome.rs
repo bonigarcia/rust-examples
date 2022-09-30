@@ -1,11 +1,13 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-use selenium_manager::{BrowserManager, create_driver_path, detect_browser_major_version, get_browser_ttl, get_driver_ttl, get_metadata, is_ttl_valid, write_metadata};
+use selenium_manager::{BrowserManager, create_driver_path, detect_browser_major_version};
+use crate::metadata::{get_browser_ttl, get_driver_ttl, get_metadata, is_ttl_valid, write_metadata};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
 const CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
+const LATEST_RELEASE: &str = "LATEST_RELEASE";
 
 pub struct ChromeManager {
     pub browser_name: &'static str,
@@ -68,7 +70,12 @@ impl BrowserManager for ChromeManager {
             log::debug!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
             driver_version = metadata.chrome.driver_version;
         } else {
-            let driver_url = format!("{}LATEST_RELEASE_{}", CHROMEDRIVER_URL, browser_version);
+            let driver_url = if browser_version.is_empty() {
+                format!("{}{}", CHROMEDRIVER_URL, LATEST_RELEASE)
+            }
+            else {
+                format!("{}{}_{}", CHROMEDRIVER_URL, LATEST_RELEASE, browser_version)
+            };
             log::debug!("Driver TTL is stale. Reading {} version from {}", &self.driver_name, driver_url);
             driver_version = reqwest::get(driver_url).await?.text().await?;
 
