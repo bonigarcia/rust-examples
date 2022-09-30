@@ -17,4 +17,5 @@ members = [
     "selenium-manager",
     "traits",
     "json",
+    "metadata",
 ]

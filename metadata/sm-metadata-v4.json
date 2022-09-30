@@ -1,0 +1,17 @@
+{
+  "browsers": [
+    {
+      "name": "chrome",
+      "version": "105",
+      "ttl": 1664568165
+    }
+  ],
+  "drivers": [
+    {
+      "name": "chromedriver",
+      "browser_version": "105",
+      "driver_version": "105.0.5195.52",
+      "ttl": 1664568165
+    }
+  ]
+}
