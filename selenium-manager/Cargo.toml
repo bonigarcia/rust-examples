@@ -4,7 +4,7 @@ version = "1.0.0-M1"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.0.3", features = ["derive"] }
+clap = { version = "4.0.4", features = ["derive"] }
 exitcode = "1.1.2"
 log = "0.4.0"
 env_logger = "0.9.1"
