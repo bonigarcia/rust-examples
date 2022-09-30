@@ -5,7 +5,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 
-use crate::files::{create_path_if_not_exists, get_cache_folder};
+use crate::files::get_cache_folder;
 
 const METADATA_FILE: &str = "selenium-manager.json";
 const TTL_BROWSERS_SEC: u64 = 3600;
@@ -55,8 +55,6 @@ pub fn get_metadata() -> Metadata {
         metadata
     } else {
         log::trace!("Metadata file does not exist. Creating a new one");
-        create_path_if_not_exists(&metadata_path);
-
         Metadata { browsers: Vec::new(), drivers: Vec::new() }
     }
 }

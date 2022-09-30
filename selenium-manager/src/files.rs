@@ -41,11 +41,9 @@ pub async fn download_driver_to_tmp_folder(url: String) -> Result<(TempDir, Stri
     Ok((tmp_dir, target_path))
 }
 
-pub fn create_path_if_not_exists(target: &Path) {
-    if let Some(p) = target.parent() {
-        if !p.exists() {
-            fs::create_dir_all(&p).unwrap();
-        }
+pub fn create_path_if_not_exists(path: &Path) {
+    if !path.exists() {
+        fs::create_dir_all(&path).unwrap();
     }
 }
 
@@ -59,7 +57,10 @@ pub fn unzip(zip_file: String, target: PathBuf) {
             fs::create_dir_all(&target).unwrap();
         } else {
             log::debug!("File extracted to {} ({} bytes)", target.display(), file.size());
-            create_path_if_not_exists(&target);
+            if let Some(p) = target.parent() {
+                create_path_if_not_exists(p);
+            }
+
             let mut outfile = File::create(&target).unwrap();
 
             // Set permissions in Unix-like systems
@@ -80,8 +81,10 @@ pub fn unzip(zip_file: String, target: PathBuf) {
 }
 
 pub fn get_cache_folder() -> PathBuf {
-    Path::new(BaseDirs::new().unwrap().home_dir())
-        .join(String::from(CACHE_FOLDER).replace('/', &MAIN_SEPARATOR.to_string()))
+    let cache_path = Path::new(BaseDirs::new().unwrap().home_dir())
+        .join(String::from(CACHE_FOLDER).replace('/', &MAIN_SEPARATOR.to_string()));
+    create_path_if_not_exists(&cache_path);
+    cache_path
 }
 
 pub fn compose_driver_path_in_cache(driver_name: &str, os: &str, arch_folder: &str, driver_version: &str) -> PathBuf {

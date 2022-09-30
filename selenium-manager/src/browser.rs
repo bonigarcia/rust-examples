@@ -29,7 +29,6 @@ pub trait BrowserManager {
     }
 }
 
-
 pub fn run_shell_command(command: &str, flag: &str, args: &str) -> Result<String, Box<dyn Error>> {
     log::debug!("Running {} command: {:?}",command, args);
     let output = Command::new(command)
@@ -73,8 +72,7 @@ pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args:
 
             if browser_version.is_empty() {
                 log::warn!("The version of {} cannot be detected. Trying with latest driver version", browser_name);
-            }
-            else {
+            } else {
                 metadata.browsers.push(create_browser_metadata(browser_name, &browser_version));
                 write_metadata(&metadata);
             }
