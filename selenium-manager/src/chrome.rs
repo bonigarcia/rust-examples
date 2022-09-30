@@ -1,8 +1,8 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-use selenium_manager::{BrowserManager, create_driver_path, detect_browser_major_version};
-use crate::metadata::{create_browser_metadata, create_driver_metadata, get_browser_version_from_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
+use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
+use crate::utils::{BrowserManager, create_driver_path, detect_browser_version};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -29,33 +29,16 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_browser_version(&self, os: &str) -> Result<String, String> {
-        let mut metadata = get_metadata();
+        let (shell, flag, args) = match os {
+            "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                            r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                            r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                            r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
+            "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
+            _ => ("sh", "-c", vec!("google-chrome --version")),
+        };
 
-        match get_browser_version_from_metadata(&metadata.browsers, self.browser_name) {
-            Some(v) => {
-                log::trace!("Browser with valid TTL. Getting {} version from metadata", self.browser_name);
-                Ok(v)
-            }
-            _ => {
-                log::debug!("Running command to find out {} version", self.browser_name);
-                let (shell, flag, args) = match os {
-                    "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                                    r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                                    r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                                    r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
-                    "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
-                    _ => ("sh", "-c", vec!("google-chrome --version")),
-                };
-                let browser_version = detect_browser_major_version(self.browser_name, shell, flag, args);
-
-                if !browser_version.is_empty() {
-                    metadata.browsers.push(create_browser_metadata(self.browser_name, &browser_version));
-                    write_metadata(&metadata);
-                }
-
-                Ok(browser_version)
-            }
-        }
+        detect_browser_version(self.browser_name, shell, flag, args)
     }
 
     fn get_driver_name(&self) -> &str {

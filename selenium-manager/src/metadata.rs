@@ -5,7 +5,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 
-use selenium_manager::{check_target_path, get_cache_folder};
+use crate::utils::{check_target_path, get_cache_folder};
 
 const METADATA_FILE: &str = "selenium-manager.json";
 const TTL_BROWSERS_SEC: u64 = 3600;
