@@ -35,7 +35,7 @@ pub struct Metadata {
 
 
 fn get_metadata_path() -> PathBuf {
-    get_cache_folder().join(&METADATA_FILE.to_string())
+    get_cache_folder().join(METADATA_FILE)
 }
 
 fn now_unix_timestamp() -> u64 {
@@ -43,15 +43,15 @@ fn now_unix_timestamp() -> u64 {
 }
 
 pub fn get_metadata() -> Metadata {
-    let metadata_path = get_cache_folder().join(&METADATA_FILE.to_string());
+    let metadata_path = get_cache_folder().join(METADATA_FILE);
     log::trace!("Reading metadata from {}", metadata_path.display());
 
     if metadata_path.exists() {
         let metadata_file = File::open(metadata_path).unwrap();
         let mut metadata: Metadata = serde_json::from_reader(metadata_file).unwrap();
         let now = now_unix_timestamp();
-        metadata.browsers = metadata.browsers.into_iter().filter(|b| b.browser_ttl > now).collect();
-        metadata.drivers = metadata.drivers.into_iter().filter(|d| d.driver_ttl > now).collect();
+        metadata.browsers.retain(|b| b.browser_ttl > now);
+        metadata.drivers.retain(|d| d.driver_ttl > now);
         metadata
     } else {
         log::debug!("Metadata does not exist. Creating a new metadata file");
@@ -59,8 +59,8 @@ pub fn get_metadata() -> Metadata {
     }
 }
 
-pub fn get_browser_version_from_metadata(browsers_metadata: &Vec<Browser>, browser_name: &str) -> Option<String> {
-    let browser: Vec<&Browser> = browsers_metadata.into_iter()
+pub fn get_browser_version_from_metadata(browsers_metadata: &[Browser], browser_name: &str) -> Option<String> {
+    let browser: Vec<&Browser> = browsers_metadata.iter()
         .filter(|b| b.browser_name.eq(browser_name)).collect();
     if browser.is_empty() {
         None
@@ -69,8 +69,8 @@ pub fn get_browser_version_from_metadata(browsers_metadata: &Vec<Browser>, brows
     }
 }
 
-pub fn get_driver_version_from_metadata(drivers_metadata: &Vec<Driver>, driver_name: &str, browser_version: &str) -> Option<String> {
-    let driver: Vec<&Driver> = drivers_metadata.into_iter()
+pub fn get_driver_version_from_metadata(drivers_metadata: &[Driver], driver_name: &str, browser_version: &str) -> Option<String> {
+    let driver: Vec<&Driver> = drivers_metadata.iter()
         .filter(|d| d.driver_name.eq(driver_name) &&
             d.browser_version.eq(browser_version)).collect();
     if driver.is_empty() {

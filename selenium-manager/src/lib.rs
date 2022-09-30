@@ -146,7 +146,7 @@ pub fn create_driver_path(driver_name: &str, os: &str, arch_folder: &str, driver
 }
 
 pub fn get_driver_filename(driver_name: &str, os: &str) -> String {
-    format!("{}{}", driver_name, get_binary_extension(&os))
+    format!("{}{}", driver_name, get_binary_extension(os))
 }
 
 pub fn get_binary_extension(os: &str) -> &str {
