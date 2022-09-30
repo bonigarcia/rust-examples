@@ -29,7 +29,7 @@ impl BrowserManager for ChromeManager {
         self.browser_name
     }
 
-    fn get_browser_version(&self, os: &str) -> Result<String, String> {
+    fn get_browser_version(&self, os: &str) -> Option<String> {
         let (shell, flag, args) = match os {
             "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
                                             r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
@@ -38,7 +38,6 @@ impl BrowserManager for ChromeManager {
             "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
             _ => ("sh", "-c", vec!("google-chrome --version")),
         };
-
         detect_browser_version(self.browser_name, shell, flag, args)
     }
 

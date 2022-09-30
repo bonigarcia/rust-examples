@@ -44,28 +44,33 @@ struct Cli {
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     setup_logging(&cli);
-    let browser_type: String = cli.browser;
+    let browser_name: String = cli.browser;
     let os = OS;
     let arch = ARCH;
-    let browser_manager: Box<dyn BrowserManager> = if browser_type.eq_ignore_ascii_case("chrome") {
+    let browser_manager: Box<dyn BrowserManager> = if browser_name.eq_ignore_ascii_case("chrome") {
         ChromeManager::new()
     } else {
-        return Err(format!("Browser {} not supported", browser_type))?;
+        return Err(format!("Browser {} not supported", browser_name))?;
     };
 
     let mut browser_version = cli.version;
     if browser_version.is_empty() {
-        browser_version = browser_manager.get_browser_version(os)?;
-        if !browser_version.is_empty() {
-            log::debug!("The major version of your local {} is {}", browser_type, browser_version);
+        match browser_manager.get_browser_version(os) {
+            Some(version) => {
+                browser_version = version;
+                log::debug!("Detected browser: {} {}", browser_name, browser_version);
+            }
+            None => {
+                log::warn!("The version of {} cannot be detected. Trying with latest driver version", browser_name);
+            }
         }
     }
     let driver_version = browser_manager.get_driver_version(&browser_version)?;
-    log::debug!("You need to use {} {}", browser_manager.get_driver_name(), driver_version);
+    log::debug!("Required driver: {} {}", browser_manager.get_driver_name(), driver_version);
 
     let driver_path = browser_manager.get_driver_path_in_cache(&driver_version, os, arch);
     if driver_path.exists() {
-        log::debug!("{} {} is already in the cache", browser_manager.get_driver_name(), driver_version);
+        log::debug!("{} {} already in the cache", browser_manager.get_driver_name(), driver_version);
     } else {
         browser_manager.download_driver(&driver_version, os, arch)?;
     }

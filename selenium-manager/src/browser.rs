@@ -10,7 +10,7 @@ use crate::metadata::{create_browser_metadata, get_browser_version_from_metadata
 pub trait BrowserManager {
     fn get_browser_name(&self) -> &str;
 
-    fn get_browser_version(&self, os: &str) -> Result<String, String>;
+    fn get_browser_version(&self, os: &str) -> Option<String>;
 
     fn get_driver_name(&self) -> &str;
 
@@ -44,16 +44,16 @@ pub fn parse_version(version_text: String) -> String {
     re.replace_all(&*version_text, "").to_string()
 }
 
-pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
+pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Option<String> {
     let mut metadata = get_metadata();
 
     match get_browser_version_from_metadata(&metadata.browsers, browser_name) {
-        Some(v) => {
+        Some(version) => {
             log::trace!("Browser with valid TTL. Getting {} version from metadata", browser_name);
-            Ok(v)
+            Some(version)
         }
         _ => {
-            log::debug!("Running command to find out {} version", browser_name);
+            log::debug!("Using shell command to find out {} version", browser_name);
             let mut browser_version = "".to_string();
             for arg in args.iter() {
                 let output = match run_shell_command(shell, flag, *arg) {
@@ -64,20 +64,19 @@ pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args:
                 if full_browser_version.is_empty() {
                     continue;
                 }
-                log::debug!("Your {} version is {}", browser_name, full_browser_version);
+                log::debug!("The version of {} is {}", browser_name, full_browser_version);
                 let browser_version_vec: Vec<&str> = full_browser_version.split('.').collect();
                 browser_version = browser_version_vec.first().unwrap().to_string();
                 break;
             }
 
             if browser_version.is_empty() {
-                log::warn!("The version of {} cannot be detected. Trying with latest driver version", browser_name);
+                None
             } else {
                 metadata.browsers.push(create_browser_metadata(browser_name, &browser_version));
                 write_metadata(&metadata);
+                Some(browser_version)
             }
-
-            Ok(browser_version)
         }
     }
 }
