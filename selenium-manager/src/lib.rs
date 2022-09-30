@@ -65,7 +65,7 @@ pub async fn download_to_tmp_folder(url: String) -> Result<(TempDir, String), Bo
     Ok((tmp_dir, target_path))
 }
 
-pub fn check_target_path(target: &PathBuf) {
+pub fn check_target_path(target: &Path) {
     if let Some(p) = target.parent() {
         if !p.exists() {
             fs::create_dir_all(&p).unwrap();
