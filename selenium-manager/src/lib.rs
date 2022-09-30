@@ -4,16 +4,21 @@ use std::fs::File;
 use std::io;
 use std::io::copy;
 use std::io::Cursor;
-use std::path::MAIN_SEPARATOR;
 use std::path::{Path, PathBuf};
+use std::path::MAIN_SEPARATOR;
 use std::process::Command;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use directories::BaseDirs;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 use tempfile::{Builder, TempDir};
 use zip::ZipArchive;
 
-pub const CACHE_FOLDER: &str = ".cache/selenium";
+const CACHE_FOLDER: &str = ".cache/selenium";
+const METADATA_FILE: &str = "selenium-manager.json";
+const TTL_BROWSERS_SEC: u64 = 3600;
+const TTL_DRIVERS_SEC: u64 = 86400;
 
 pub trait BrowserManager {
     fn get_browser_name(&self) -> &str;
@@ -36,6 +41,20 @@ pub trait BrowserManager {
         Ok(())
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct Browser {
+    pub browser_version: String,
+    pub browser_version_ttl: u64,
+    pub driver_version: String,
+    pub driver_version_ttl: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Metadata {
+    pub chrome: Browser,
+}
+
 
 #[tokio::main]
 pub async fn download_to_tmp_folder(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
@@ -114,7 +133,7 @@ pub fn parse_version(version_text: String) -> String {
     re.replace_all(&*version_text, "").to_string()
 }
 
-pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Result<String, String> {
+pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> String {
     for arg in args.iter() {
         let output = match run_shell_command(shell, flag, *arg) {
             Ok(out) => out,
@@ -125,21 +144,20 @@ pub fn detect_browser_major_version(browser_name: &str, shell: &str, flag: &str,
             continue;
         }
         log::debug!("Your {} version is {}", browser_name, browser_version);
-
         let browser_version_vec: Vec<&str> = browser_version.split('.').collect();
-
-        // TODO write metadata
-
-        return Ok(browser_version_vec.first().unwrap().to_string());
+        return browser_version_vec.first().unwrap().to_string();
     }
-    Err(format!("{} not found", browser_name))
+    log::warn!("The version of {} cannot be detected. Trying with latest driver version", browser_name);
+    "".to_string()
+}
+
+pub fn get_cache_folder() -> PathBuf {
+    Path::new(BaseDirs::new().unwrap().home_dir())
+        .join(String::from(CACHE_FOLDER).replace('/', &MAIN_SEPARATOR.to_string()))
 }
 
 pub fn create_driver_path(driver_name: &str, os: &str, arch_folder: &str, driver_version: &str) -> PathBuf {
-    let cache_folder = String::from(CACHE_FOLDER).replace('/', &*String::from(MAIN_SEPARATOR));
-    let base_dirs = BaseDirs::new().unwrap();
-    Path::new(base_dirs.home_dir())
-        .join(cache_folder)
+    get_cache_folder()
         .join(driver_name)
         .join(arch_folder)
         .join(driver_version)
@@ -155,4 +173,55 @@ pub fn get_binary_extension(os: &str) -> &str {
         "windows" => ".exe",
         _ => "",
     }
+}
+
+pub fn get_metadata_path() -> PathBuf {
+    get_cache_folder().join(&METADATA_FILE.to_string())
+}
+
+pub fn new_metadata_browser() -> Browser {
+    Browser {
+        browser_version: "".to_string(),
+        browser_version_ttl: 0,
+        driver_version: "".to_string(),
+        driver_version_ttl: 0,
+    }
+}
+
+pub fn get_metadata() -> Metadata {
+    let metadata_path = get_cache_folder().join(&METADATA_FILE.to_string());
+    log::trace!("Reading metadata from {}", metadata_path.display());
+
+    if metadata_path.exists() {
+        let metadata_file = File::open(metadata_path).unwrap();
+        serde_json::from_reader(metadata_file).unwrap()
+    } else {
+        log::debug!("Metadata does not exist. Creating a new metadata file");
+
+        Metadata {
+            chrome: new_metadata_browser()
+        }
+    }
+}
+
+pub fn now_unix_timestamp() -> u64 {
+    SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs()
+}
+
+pub fn get_driver_ttl() -> u64 {
+    now_unix_timestamp() + TTL_DRIVERS_SEC
+}
+
+pub fn get_browser_ttl() -> u64 {
+    now_unix_timestamp() + TTL_BROWSERS_SEC
+}
+
+pub fn write_metadata(metadata: &Metadata) {
+    let metadata_path = get_metadata_path();
+    log::debug!("Writing metadata to {}", metadata_path.display());
+    fs::write(metadata_path, serde_json::to_string_pretty(metadata).unwrap()).unwrap();
+}
+
+pub fn is_ttl_valid(ttl: u64) -> bool {
+    now_unix_timestamp() < ttl
 }
