@@ -71,7 +71,7 @@ fn main() {
     let mut file = File::open(&filename).unwrap();
     let mut data = String::new();
     file.read_to_string(&mut data).unwrap();
-    let  metadata2: Metadata = serde_json::from_str(&data).unwrap();
+    let metadata2: Metadata = serde_json::from_str(&data).unwrap();
 
     println!("{} {} {}", metadata2.browsers[0].browser_name, metadata2.browsers[0].browser_version, metadata2.browsers[0].browser_version_ttl);
     println!("{} {} {}", metadata2.browsers[0].driver_name, metadata2.browsers[0].driver_version, metadata2.browsers[0].driver_version_ttl);
