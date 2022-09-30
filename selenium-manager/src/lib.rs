@@ -40,7 +40,7 @@ pub trait BrowserManager {
 #[tokio::main]
 pub async fn download_to_tmp_folder(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
     let tmp_dir = Builder::new().prefix("selenium-manager").tempdir()?;
-    log::debug!("Downloading {} to temporal folder {:?}", url, tmp_dir.path());
+    log::trace!("Downloading {} to temporal folder {:?}", url, tmp_dir.path());
 
     let response = reqwest::get(url).await?;
     let target_path;
