@@ -33,7 +33,7 @@ impl BrowserManager for ChromeManager {
 
         match get_browser_version_from_metadata(&metadata.browsers, self.browser_name) {
             Some(v) => {
-                log::debug!("Browser with valid TTL. Getting {} version from metadata", self.browser_name);
+                log::trace!("Browser with valid TTL. Getting {} version from metadata", self.browser_name);
                 Ok(v)
             }
             _ => {
@@ -68,7 +68,7 @@ impl BrowserManager for ChromeManager {
 
         match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
             Some(v) => {
-                log::debug!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
+                log::trace!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
                 Ok(v)
             }
             _ => {

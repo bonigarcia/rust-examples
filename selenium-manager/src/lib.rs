@@ -65,6 +65,14 @@ pub async fn download_to_tmp_folder(url: String) -> Result<(TempDir, String), Bo
     Ok((tmp_dir, target_path))
 }
 
+pub fn check_target_path(target: &PathBuf) {
+    if let Some(p) = target.parent() {
+        if !p.exists() {
+            fs::create_dir_all(&p).unwrap();
+        }
+    }
+}
+
 pub fn unzip(zip_file: String, target: PathBuf) {
     let file = File::open(zip_file).unwrap();
     let mut archive = ZipArchive::new(file).unwrap();
@@ -75,11 +83,7 @@ pub fn unzip(zip_file: String, target: PathBuf) {
             fs::create_dir_all(&target).unwrap();
         } else {
             log::debug!("File extracted to {} ({} bytes)", target.display(), file.size());
-            if let Some(p) = target.parent() {
-                if !p.exists() {
-                    fs::create_dir_all(&p).unwrap();
-                }
-            }
+            check_target_path(&target);
             let mut outfile = File::create(&target).unwrap();
 
             // Set permissions in Unix-like systems

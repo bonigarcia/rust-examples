@@ -5,7 +5,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 
-use selenium_manager::get_cache_folder;
+use selenium_manager::{check_target_path, get_cache_folder};
 
 const METADATA_FILE: &str = "selenium-manager.json";
 const TTL_BROWSERS_SEC: u64 = 3600;
@@ -54,7 +54,9 @@ pub fn get_metadata() -> Metadata {
         metadata.drivers.retain(|d| d.driver_ttl > now);
         metadata
     } else {
-        log::debug!("Metadata does not exist. Creating a new metadata file");
+        log::trace!("Metadata file does not exist. Creating a new one");
+        check_target_path(&metadata_path);
+
         Metadata { browsers: Vec::new(), drivers: Vec::new() }
     }
 }
