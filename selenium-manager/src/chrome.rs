@@ -2,7 +2,7 @@ use std::error::Error;
 use std::path::PathBuf;
 
 use selenium_manager::{BrowserManager, create_driver_path, detect_browser_major_version};
-use crate::metadata::{get_browser_ttl, get_driver_ttl, get_metadata, is_ttl_valid, write_metadata};
+use crate::metadata::{create_browser_metadata, create_driver_metadata, get_browser_version_from_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -31,29 +31,30 @@ impl BrowserManager for ChromeManager {
     fn get_browser_version(&self, os: &str) -> Result<String, String> {
         let mut metadata = get_metadata();
 
-        let browser_version;
-        if is_ttl_valid(metadata.chrome.browser_version_ttl) {
-            log::debug!("Browser TTL is valid. Getting {} version from metadata", self.browser_name);
-            Ok(metadata.chrome.browser_version)
-        } else {
-            log::debug!("Browser TTL is stale. Running command to find out {} version", self.browser_name);
-            let (shell, flag, args) = match os {
-                "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                                r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                                r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                                r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
-                "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
-                _ => ("sh", "-c", vec!("google-chrome --version")),
-            };
-            browser_version = detect_browser_major_version(self.browser_name, shell, flag, args);
-
-            if !browser_version.is_empty() {
-                metadata.chrome.browser_version  = browser_version.to_string();
-                metadata.chrome.browser_version_ttl = get_browser_ttl();
-                write_metadata(&metadata);
+        match get_browser_version_from_metadata(&metadata.browsers, self.browser_name) {
+            Some(v) => {
+                log::debug!("Browser with valid TTL. Getting {} version from metadata", self.browser_name);
+                Ok(v)
             }
+            _ => {
+                log::debug!("Running command to find out {} version", self.browser_name);
+                let (shell, flag, args) = match os {
+                    "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                                    r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                                    r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                                                    r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
+                    "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
+                    _ => ("sh", "-c", vec!("google-chrome --version")),
+                };
+                let browser_version = detect_browser_major_version(self.browser_name, shell, flag, args);
 
-            Ok(browser_version)
+                if !browser_version.is_empty() {
+                    metadata.browsers.push(create_browser_metadata(self.browser_name, &browser_version));
+                    write_metadata(&metadata);
+                }
+
+                Ok(browser_version)
+            }
         }
     }
 
@@ -65,26 +66,26 @@ impl BrowserManager for ChromeManager {
     async fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>> {
         let mut metadata = get_metadata();
 
-        let driver_version;
-        if is_ttl_valid(metadata.chrome.driver_version_ttl) {
-            log::debug!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
-            driver_version = metadata.chrome.driver_version;
-        } else {
-            let driver_url = if browser_version.is_empty() {
-                format!("{}{}", CHROMEDRIVER_URL, LATEST_RELEASE)
+        match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
+            Some(v) => {
+                log::debug!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
+                Ok(v)
             }
-            else {
-                format!("{}{}_{}", CHROMEDRIVER_URL, LATEST_RELEASE, browser_version)
-            };
-            log::debug!("Driver TTL is stale. Reading {} version from {}", &self.driver_name, driver_url);
-            driver_version = reqwest::get(driver_url).await?.text().await?;
+            _ => {
+                let driver_url = if browser_version.is_empty() {
+                    format!("{}{}", CHROMEDRIVER_URL, LATEST_RELEASE)
+                } else {
+                    format!("{}{}_{}", CHROMEDRIVER_URL, LATEST_RELEASE, browser_version)
+                };
+                log::debug!("Reading {} version from {}", &self.driver_name, driver_url);
+                let driver_version = reqwest::get(driver_url).await?.text().await?;
 
-            metadata.chrome.driver_version = driver_version.to_string();
-            metadata.chrome.driver_version_ttl = get_driver_ttl();
-            write_metadata(&metadata);
+                metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));
+                write_metadata(&metadata);
+
+                Ok(driver_version)
+            }
         }
-
-        Ok(driver_version)
     }
 
     fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String {

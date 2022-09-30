@@ -14,29 +14,28 @@ const TTL_DRIVERS_SEC: u64 = 86400;
 
 #[derive(Serialize, Deserialize)]
 pub struct Browser {
+    pub browser_name: String,
     pub browser_version: String,
-    pub browser_version_ttl: u64,
+    pub browser_ttl: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Driver {
+    pub browser_version: String,
+    pub driver_name: String,
     pub driver_version: String,
-    pub driver_version_ttl: u64,
+    pub driver_ttl: u64,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Metadata {
-    pub chrome: Browser,
+    pub browsers: Vec<Browser>,
+    pub drivers: Vec<Driver>,
 }
 
 
 fn get_metadata_path() -> PathBuf {
     get_cache_folder().join(&METADATA_FILE.to_string())
-}
-
-fn new_metadata_browser() -> Browser {
-    Browser {
-        browser_version: "".to_string(),
-        browser_version_ttl: 0,
-        driver_version: "".to_string(),
-        driver_version_ttl: 0,
-    }
 }
 
 fn now_unix_timestamp() -> u64 {
@@ -49,30 +48,57 @@ pub fn get_metadata() -> Metadata {
 
     if metadata_path.exists() {
         let metadata_file = File::open(metadata_path).unwrap();
-        serde_json::from_reader(metadata_file).unwrap()
+        let mut metadata: Metadata = serde_json::from_reader(metadata_file).unwrap();
+        let now = now_unix_timestamp();
+        metadata.browsers = metadata.browsers.into_iter().filter(|b| b.browser_ttl > now).collect();
+        metadata.drivers = metadata.drivers.into_iter().filter(|d| d.driver_ttl > now).collect();
+        metadata
     } else {
         log::debug!("Metadata does not exist. Creating a new metadata file");
-
-        Metadata {
-            chrome: new_metadata_browser()
-        }
+        Metadata { browsers: Vec::new(), drivers: Vec::new() }
     }
 }
 
-pub fn get_driver_ttl() -> u64 {
-    now_unix_timestamp() + TTL_DRIVERS_SEC
+pub fn get_browser_version_from_metadata(browsers_metadata: &Vec<Browser>, browser_name: &str) -> Option<String> {
+    let browser: Vec<&Browser> = browsers_metadata.into_iter()
+        .filter(|b| b.browser_name.eq(browser_name)).collect();
+    if browser.is_empty() {
+        None
+    } else {
+        Some(browser.get(0).unwrap().browser_version.to_string())
+    }
 }
 
-pub fn get_browser_ttl() -> u64 {
-    now_unix_timestamp() + TTL_BROWSERS_SEC
+pub fn get_driver_version_from_metadata(drivers_metadata: &Vec<Driver>, driver_name: &str, browser_version: &str) -> Option<String> {
+    let driver: Vec<&Driver> = drivers_metadata.into_iter()
+        .filter(|d| d.driver_name.eq(driver_name) &&
+            d.browser_version.eq(browser_version)).collect();
+    if driver.is_empty() {
+        None
+    } else {
+        Some(driver.get(0).unwrap().driver_version.to_string())
+    }
+}
+
+pub fn create_browser_metadata(browser_name: &str, browser_version: &String) -> Browser {
+    Browser {
+        browser_name: browser_name.to_string(),
+        browser_version: browser_version.to_string(),
+        browser_ttl: now_unix_timestamp() + TTL_BROWSERS_SEC,
+    }
+}
+
+pub fn create_driver_metadata(browser_version: &str, driver_name: &str, driver_version: &str) -> Driver {
+    Driver {
+        browser_version: browser_version.to_string(),
+        driver_name: driver_name.to_string(),
+        driver_version: driver_version.to_string(),
+        driver_ttl: now_unix_timestamp() + TTL_DRIVERS_SEC,
+    }
 }
 
 pub fn write_metadata(metadata: &Metadata) {
     let metadata_path = get_metadata_path();
-    log::debug!("Writing metadata to {}", metadata_path.display());
+    log::trace!("Writing metadata to {}", metadata_path.display());
     fs::write(metadata_path, serde_json::to_string_pretty(metadata).unwrap()).unwrap();
-}
-
-pub fn is_ttl_valid(ttl: u64) -> bool {
-    now_unix_timestamp() < ttl
 }
