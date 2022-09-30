@@ -1,8 +1,9 @@
 use std::error::Error;
 use std::path::PathBuf;
 
+use crate::browser::{BrowserManager, detect_browser_version};
+use crate::files::compose_driver_path_in_cache;
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
-use crate::utils::{BrowserManager, create_driver_path, detect_browser_version};
 
 const CHROME: &str = "chrome";
 const CHROMEDRIVER: &str = "chromedriver";
@@ -94,6 +95,6 @@ impl BrowserManager for ChromeManager {
         if os.eq("macos") && arch.eq("aarch64") {
             arch_folder = "mac-arm64";
         }
-        create_driver_path(self.driver_name, os, arch_folder, driver_version)
+        compose_driver_path_in_cache(self.driver_name, os, arch_folder, driver_version)
     }
 }
