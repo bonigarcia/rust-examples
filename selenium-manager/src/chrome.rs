@@ -80,8 +80,10 @@ impl BrowserManager for ChromeManager {
                 log::debug!("Reading {} version from {}", &self.driver_name, driver_url);
                 let driver_version = reqwest::get(driver_url).await?.text().await?;
 
-                metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));
-                write_metadata(&metadata);
+                if !browser_version.is_empty() {
+                    metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));
+                    write_metadata(&metadata);
+                }
 
                 Ok(driver_version)
             }

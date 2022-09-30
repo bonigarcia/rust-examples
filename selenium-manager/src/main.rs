@@ -55,7 +55,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut browser_version = cli.version;
     if browser_version.is_empty() {
         browser_version = browser_manager.get_browser_version(os)?;
-        log::debug!("The major version of your local {} is {}", browser_type, browser_version);
+        if !browser_version.is_empty() {
+            log::debug!("The major version of your local {} is {}", browser_type, browser_version);
+        }
     }
     let driver_version = browser_manager.get_driver_version(&browser_version)?;
     log::debug!("You need to use {} {}", browser_manager.get_driver_name(), driver_version);
