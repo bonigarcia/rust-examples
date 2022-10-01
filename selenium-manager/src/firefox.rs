@@ -33,7 +33,7 @@ impl BrowserManager for FirefoxManager {
         let (shell, flag, args) = match os {
             "windows" => ("cmd", "/C", vec!(r#"cmd.exe /C wmic datafile where name='%PROGRAMFILES:\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value"#,
                                             r#"cmd.exe /C wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value' get Version /value"#,
-                                            r#"REG QUERY 'HKCU\Software\Mozilla\Mozilla Firefox' /v CurrentVersion"#)),
+                                            r#"REG QUERY "HKCU\Software\Mozilla\Mozilla Firefox" /v CurrentVersion"#)),
             "macos" => ("sh", "-c", vec!(r#"/Applications/Firefox.app/Contents/MacOS/firefox -v"#)),
             _ => ("sh", "-c", vec!("firefox -v")),
         };
