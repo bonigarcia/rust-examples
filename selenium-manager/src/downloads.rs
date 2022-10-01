@@ -4,6 +4,7 @@ use std::io::copy;
 use std::io::Cursor;
 
 use tempfile::{Builder, TempDir};
+
 use crate::files::parse_version;
 
 #[tokio::main]

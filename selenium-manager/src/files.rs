@@ -5,10 +5,13 @@ use std::path::{Path, PathBuf};
 use std::path::MAIN_SEPARATOR;
 
 use directories::BaseDirs;
+use flate2::read::GzDecoder;
 use regex::Regex;
+use tar::Archive;
 use zip::ZipArchive;
 
 const CACHE_FOLDER: &str = ".cache/selenium";
+const ZIP: &str = ".zip";
 
 pub fn clear_cache() {
     let cache_path = compose_cache_folder();
@@ -24,8 +27,24 @@ pub fn create_path_if_not_exists(path: &Path) {
     }
 }
 
-pub fn unzip(zip_file: String, target: PathBuf) {
-    let file = File::open(zip_file).unwrap();
+pub fn uncompress(compressed_file: &String, target: PathBuf) {
+    let file = File::open(compressed_file).unwrap();
+    if compressed_file.ends_with(ZIP) {
+        unzip(file, target);
+    } else {
+        untargz(file, target);
+    }
+}
+
+pub fn untargz(file: File, target: PathBuf) {
+    log::trace!("Untargz file to {}", target.display());
+    let tar = GzDecoder::new(file);
+    let mut archive = Archive::new(tar);
+    archive.unpack(target.parent().unwrap()).unwrap();
+}
+
+pub fn unzip(file: File, target: PathBuf) {
+    log::trace!("Unzipping file to {}", target.display());
     let mut archive = ZipArchive::new(file).unwrap();
 
     for i in 0..archive.len() {

@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 use crate::downloads::download_driver_to_tmp_folder;
-use crate::files::{parse_version, unzip};
+use crate::files::{parse_version, uncompress};
 use crate::metadata::{create_browser_metadata, get_browser_version_from_metadata, get_metadata, write_metadata};
 
 pub trait BrowserManager {
@@ -23,7 +23,7 @@ pub trait BrowserManager {
         let driver_url = Self::get_driver_url(self, driver_version, os, arch);
         let (_tmp_folder, driver_zip_file) = download_driver_to_tmp_folder(driver_url)?;
         let driver_path_in_cache = Self::get_driver_path_in_cache(self, driver_version, os, arch);
-        unzip(driver_zip_file, driver_path_in_cache);
+        uncompress(&driver_zip_file, driver_path_in_cache);
         Ok(())
     }
 }
