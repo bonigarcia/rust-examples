@@ -4,7 +4,8 @@ use std::process::Command;
 
 use regex::Regex;
 
-use crate::files::{download_driver_to_tmp_folder, unzip};
+use crate::downloads::download_driver_to_tmp_folder;
+use crate::files::unzip;
 use crate::metadata::{create_browser_metadata, get_browser_version_from_metadata, get_metadata, write_metadata};
 
 pub trait BrowserManager {

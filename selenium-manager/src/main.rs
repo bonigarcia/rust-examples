@@ -11,10 +11,11 @@ use log::LevelFilter::{Debug, Info, Trace};
 use crate::browser::BrowserManager;
 use crate::chrome::ChromeManager;
 
-mod chrome;
-mod metadata;
 mod browser;
+mod chrome;
+mod downloads;
 mod files;
+mod metadata;
 
 /// Automated driver management for Selenium
 #[derive(Parser, Debug)]
