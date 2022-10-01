@@ -11,12 +11,14 @@ use log::LevelFilter::{Debug, Info, Trace};
 use crate::browser::BrowserManager;
 use crate::chrome::ChromeManager;
 use crate::edge::EdgeManager;
+use crate::firefox::FirefoxManager;
 
 mod browser;
 mod chrome;
 mod downloads;
 mod edge;
 mod files;
+mod firefox;
 mod metadata;
 
 /// Automated driver management for Selenium
@@ -52,6 +54,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let arch = ARCH;
     let browser_manager: Box<dyn BrowserManager> = if browser_name.eq_ignore_ascii_case("chrome") {
         ChromeManager::new()
+    } else if browser_name.eq_ignore_ascii_case("firefox") {
+        FirefoxManager::new()
     } else if browser_name.eq_ignore_ascii_case("edge") {
         EdgeManager::new()
     } else {
