@@ -11,6 +11,7 @@ use log::LevelFilter::{Debug, Info, Trace};
 use crate::browser::BrowserManager;
 use crate::chrome::ChromeManager;
 use crate::edge::EdgeManager;
+use crate::files::clear_cache;
 use crate::firefox::FirefoxManager;
 
 mod browser;
@@ -44,6 +45,10 @@ struct Cli {
     /// Display TRACE messages
     #[clap(short, long)]
     trace: bool,
+
+    /// Clear driver cache
+    #[clap(short, long)]
+    clear_cache: bool,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -61,6 +66,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     } else {
         return Err(format!("Browser {} not supported", browser_name))?;
     };
+
+    if cli.clear_cache {
+        clear_cache();
+    }
 
     let mut browser_version = cli.version;
     if browser_version.is_empty() {

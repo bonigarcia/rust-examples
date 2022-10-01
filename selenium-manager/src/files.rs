@@ -10,6 +10,14 @@ use zip::ZipArchive;
 
 const CACHE_FOLDER: &str = ".cache/selenium";
 
+pub fn clear_cache() {
+    let cache_path = compose_cache_folder();
+    if cache_path.exists() {
+        log::debug!("Clearing cache at: {}", cache_path.display());
+        fs::remove_dir_all(&cache_path).unwrap();
+    }
+}
+
 pub fn create_path_if_not_exists(path: &Path) {
     if !path.exists() {
         fs::create_dir_all(&path).unwrap();
@@ -49,9 +57,13 @@ pub fn unzip(zip_file: String, target: PathBuf) {
     }
 }
 
+pub fn compose_cache_folder() -> PathBuf {
+    Path::new(BaseDirs::new().unwrap().home_dir())
+        .join(String::from(CACHE_FOLDER).replace('/', &MAIN_SEPARATOR.to_string()))
+}
+
 pub fn get_cache_folder() -> PathBuf {
-    let cache_path = Path::new(BaseDirs::new().unwrap().home_dir())
-        .join(String::from(CACHE_FOLDER).replace('/', &MAIN_SEPARATOR.to_string()));
+    let cache_path = compose_cache_folder();
     create_path_if_not_exists(&cache_path);
     cache_path
 }
