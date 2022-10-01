@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use crate::browser::{BrowserManager, detect_browser_version};
 
 use crate::files::compose_driver_path_in_cache;
+use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
 
 
 const BROWSER_NAME: &str = "firefox";
@@ -45,8 +46,25 @@ impl BrowserManager for FirefoxManager {
         self.driver_name
     }
 
-    fn get_driver_version(&self, _browser_version: &str, _os: &str) -> Result<String, Box<dyn Error>> {
-        Ok(LATEST_RELEASE.to_string()) // TODO use online info
+    fn get_driver_version(&self, browser_version: &str, _os: &str) -> Result<String, Box<dyn Error>> {
+        let mut metadata = get_metadata();
+
+        match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
+            Some(v) => {
+                log::trace!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
+                Ok(v)
+            }
+            _ => {
+                let driver_version = LATEST_RELEASE.to_string(); // TODO use online info
+
+                if !browser_version.is_empty() {
+                    metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));
+                    write_metadata(&metadata);
+                }
+
+                Ok(driver_version)
+            }
+        }
     }
 
     fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String {

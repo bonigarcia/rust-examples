@@ -47,8 +47,9 @@ pub fn get_metadata() -> Metadata {
     log::trace!("Reading metadata from {}", metadata_path.display());
 
     if metadata_path.exists() {
-        let metadata_file = File::open(metadata_path).unwrap();
-        let mut metadata: Metadata = serde_json::from_reader(metadata_file).unwrap();
+        let metadata_file = File::open(&metadata_path).unwrap();
+        let _metadata_content = fs::read_to_string(&metadata_path).unwrap();
+        let mut metadata: Metadata = serde_json::from_reader(&metadata_file).unwrap();
         let now = now_unix_timestamp();
         metadata.browsers.retain(|b| b.browser_ttl > now);
         metadata.drivers.retain(|d| d.driver_ttl > now);
