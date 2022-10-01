@@ -59,8 +59,7 @@ pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args:
                     continue;
                 }
                 log::debug!("The version of {} is {}", browser_name, full_browser_version);
-                let browser_version_vec: Vec<&str> = full_browser_version.split('.').collect();
-                browser_version = browser_version_vec.first().unwrap().to_string();
+                browser_version = get_major_version(&full_browser_version);
                 break;
             }
 
@@ -73,4 +72,9 @@ pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args:
             }
         }
     }
+}
+
+pub fn get_major_version(full_version: &str) -> String {
+    let version_vec: Vec<&str> = full_version.split('.').collect();
+    version_vec.first().unwrap().to_string()
 }

@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-use crate::browser::{BrowserManager, detect_browser_version};
+use crate::browser::{BrowserManager, detect_browser_version, get_major_version};
 use crate::downloads::read_content_from_link;
 use crate::files::compose_driver_path_in_cache;
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
@@ -78,11 +78,10 @@ impl BrowserManager for ChromeManager {
             "aarch64" => "64_m1",
             _ => "64",
         };
-        // Difference in format from chromedriver 105 and before to 106. See:
-        // https://chromedriver.storage.googleapis.com/index.html?path=104.0.5112.79/
-        // https://chromedriver.storage.googleapis.com/index.html?path=105.0.5195.52/
-        // https://chromedriver.storage.googleapis.com/index.html?path=106.0.5249.61/
-        if driver_version.starts_with("106") {
+        // As of chromedriver 106, the naming convention for macOS ARM64 releases changed. See:
+        // https://groups.google.com/g/chromedriver-users/c/JRuQzH3qr2c
+        let major_driver_version = get_major_version(driver_version).parse::<i32>().unwrap();
+        if major_driver_version >= 106 {
             m1 = "_arm64";
         }
         match os {
