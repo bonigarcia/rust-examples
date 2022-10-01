@@ -82,13 +82,11 @@ impl BrowserManager for FirefoxManager {
             else {
                 "macos.tar.gz"
             }
-        } else {
-            if arch.eq("x86") {
-                "linux32.tar.gz"
-            }
-            else {
-                "linux64.tar.gz"
-            }
+        } else if arch.eq("x86") {
+            "linux32.tar.gz"
+        }
+        else {
+            "linux64.tar.gz"
         };
         format!("{}v{}/{}-v{}-{}", DRIVER_URL, driver_version, self.driver_name, driver_version, driver_label)
     }
@@ -108,13 +106,11 @@ impl BrowserManager for FirefoxManager {
             else {
                 "mac64"
             }
-        } else {
-            if arch.eq("x86") {
-                "linux32"
-            }
-            else {
-                "linux64"
-            }
+        } else if arch.eq("x86") {
+            "linux32"
+        }
+        else {
+            "linux64"
         };
         compose_driver_path_in_cache(self.driver_name, os, arch_folder, driver_version)
     }
