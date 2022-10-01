@@ -1,14 +1,10 @@
-
 use std::fs;
 use std::fs::File;
 use std::io;
-
-
 use std::path::{Path, PathBuf};
 use std::path::MAIN_SEPARATOR;
 
 use directories::BaseDirs;
-
 use zip::ZipArchive;
 
 const CACHE_FOLDER: &str = ".cache/selenium";

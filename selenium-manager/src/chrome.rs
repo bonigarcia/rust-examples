@@ -2,6 +2,7 @@ use std::error::Error;
 use std::path::PathBuf;
 
 use crate::browser::{BrowserManager, detect_browser_version};
+use crate::downloads::read_content_from_link;
 use crate::files::compose_driver_path_in_cache;
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
 
@@ -45,8 +46,7 @@ impl BrowserManager for ChromeManager {
         self.driver_name
     }
 
-    #[tokio::main]
-    async fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>> {
+    fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>> {
         let mut metadata = get_metadata();
 
         match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
@@ -61,7 +61,7 @@ impl BrowserManager for ChromeManager {
                     format!("{}{}_{}", CHROMEDRIVER_URL, LATEST_RELEASE, browser_version)
                 };
                 log::debug!("Reading {} version from {}", &self.driver_name, driver_url);
-                let driver_version = reqwest::get(driver_url).await?.text().await?;
+                let driver_version = read_content_from_link(driver_url)?;
 
                 if !browser_version.is_empty() {
                     metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));

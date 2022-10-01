@@ -1,15 +1,9 @@
 use std::error::Error;
-
 use std::fs::File;
-
 use std::io::copy;
 use std::io::Cursor;
 
-
-
-
 use tempfile::{Builder, TempDir};
-
 
 #[tokio::main]
 pub async fn download_driver_to_tmp_folder(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
@@ -37,4 +31,10 @@ pub async fn download_driver_to_tmp_folder(url: String) -> Result<(TempDir, Stri
     copy(&mut content, &mut tmp_file)?;
 
     Ok((tmp_dir, target_path))
+}
+
+
+#[tokio::main]
+pub async fn read_content_from_link(url: String) -> Result<String, Box<dyn Error>> {
+    Ok(reqwest::get(url).await?.text().await?)
 }
