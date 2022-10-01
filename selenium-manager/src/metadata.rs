@@ -32,7 +32,6 @@ pub struct Metadata {
     pub drivers: Vec<Driver>,
 }
 
-
 fn get_metadata_path() -> PathBuf {
     get_cache_folder().join(METADATA_FILE)
 }

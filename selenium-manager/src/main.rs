@@ -118,11 +118,7 @@ fn setup_logging(cli: &Cli) {
                 Level::Warn => level_style.set_color(Color::Yellow),
                 Level::Error => level_style.set_color(Color::Red).set_bold(true),
             };
-            writeln!(
-                buf,
-                "{}\t{}",
-                level_style.value(record.level()),
-                record.args()
+            writeln!(buf, "{}\t{}", level_style.value(record.level()), record.args()
             )
         })
         .init();
