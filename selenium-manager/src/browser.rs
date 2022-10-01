@@ -2,10 +2,8 @@ use std::error::Error;
 use std::path::PathBuf;
 use std::process::Command;
 
-use regex::Regex;
-
 use crate::downloads::download_driver_to_tmp_folder;
-use crate::files::unzip;
+use crate::files::{parse_version, unzip};
 use crate::metadata::{create_browser_metadata, get_browser_version_from_metadata, get_metadata, write_metadata};
 
 pub trait BrowserManager {
@@ -15,7 +13,7 @@ pub trait BrowserManager {
 
     fn get_driver_name(&self) -> &str;
 
-    fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>>;
+    fn get_driver_version(&self, browser_version: &str, os: &str) -> Result<String, Box<dyn Error>>;
 
     fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String;
 
@@ -38,11 +36,6 @@ pub fn run_shell_command(command: &str, flag: &str, args: &str) -> Result<String
     log::debug!("{:?}", output);
 
     Ok(String::from_utf8_lossy(&output.stdout).to_string())
-}
-
-pub fn parse_version(version_text: String) -> String {
-    let re = Regex::new(r"[^\d^.]").unwrap();
-    re.replace_all(&*version_text, "").to_string()
 }
 
 pub fn detect_browser_version(browser_name: &str, shell: &str, flag: &str, args: Vec<&str>) -> Option<String> {

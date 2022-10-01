@@ -10,10 +10,12 @@ use log::LevelFilter::{Debug, Info, Trace};
 
 use crate::browser::BrowserManager;
 use crate::chrome::ChromeManager;
+use crate::edge::EdgeManager;
 
 mod browser;
 mod chrome;
 mod downloads;
+mod edge;
 mod files;
 mod metadata;
 
@@ -50,6 +52,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let arch = ARCH;
     let browser_manager: Box<dyn BrowserManager> = if browser_name.eq_ignore_ascii_case("chrome") {
         ChromeManager::new()
+    } else if browser_name.eq_ignore_ascii_case("edge") {
+        EdgeManager::new()
     } else {
         return Err(format!("Browser {} not supported", browser_name))?;
     };
@@ -66,7 +70,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
     }
-    let driver_version = browser_manager.get_driver_version(&browser_version)?;
+    let driver_version = browser_manager.get_driver_version(&browser_version, os)?;
     log::debug!("Required driver: {} {}", browser_manager.get_driver_name(), driver_version);
 
     let driver_path = browser_manager.get_driver_path_in_cache(&driver_version, os, arch);

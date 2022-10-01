@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 use std::path::MAIN_SEPARATOR;
 
 use directories::BaseDirs;
+use regex::Regex;
 use zip::ZipArchive;
 
 const CACHE_FOLDER: &str = ".cache/selenium";
@@ -22,7 +23,7 @@ pub fn unzip(zip_file: String, target: PathBuf) {
     for i in 0..archive.len() {
         let mut file = archive.by_index(i).unwrap();
         if (file.name()).ends_with('/') {
-            fs::create_dir_all(&target).unwrap();
+            continue;
         } else {
             log::debug!("File extracted to {} ({} bytes)", target.display(), file.size());
             if let Some(p) = target.parent() {
@@ -72,4 +73,9 @@ pub fn get_binary_extension(os: &str) -> &str {
         "windows" => ".exe",
         _ => "",
     }
+}
+
+pub fn parse_version(version_text: String) -> String {
+    let re = Regex::new(r"[^\d^.]").unwrap();
+    re.replace_all(&*version_text, "").to_string()
 }

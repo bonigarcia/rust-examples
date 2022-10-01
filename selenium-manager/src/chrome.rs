@@ -6,9 +6,9 @@ use crate::downloads::read_content_from_link;
 use crate::files::compose_driver_path_in_cache;
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
 
-const CHROME: &str = "chrome";
-const CHROMEDRIVER: &str = "chromedriver";
-const CHROMEDRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
+const BROWSER_NAME: &str = "chrome";
+const DRIVER_NAME: &str = "chromedriver";
+const DRIVER_URL: &str = "https://chromedriver.storage.googleapis.com/";
 const LATEST_RELEASE: &str = "LATEST_RELEASE";
 
 pub struct ChromeManager {
@@ -19,8 +19,8 @@ pub struct ChromeManager {
 impl ChromeManager {
     pub fn new() -> Box<Self> {
         Box::new(ChromeManager {
-            browser_name: CHROME,
-            driver_name: CHROMEDRIVER,
+            browser_name: BROWSER_NAME,
+            driver_name: DRIVER_NAME,
         })
     }
 }
@@ -46,7 +46,7 @@ impl BrowserManager for ChromeManager {
         self.driver_name
     }
 
-    fn get_driver_version(&self, browser_version: &str) -> Result<String, Box<dyn Error>> {
+    fn get_driver_version(&self, browser_version: &str, _os: &str) -> Result<String, Box<dyn Error>> {
         let mut metadata = get_metadata();
 
         match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
@@ -56,9 +56,9 @@ impl BrowserManager for ChromeManager {
             }
             _ => {
                 let driver_url = if browser_version.is_empty() {
-                    format!("{}{}", CHROMEDRIVER_URL, LATEST_RELEASE)
+                    format!("{}{}", DRIVER_URL, LATEST_RELEASE)
                 } else {
-                    format!("{}{}_{}", CHROMEDRIVER_URL, LATEST_RELEASE, browser_version)
+                    format!("{}{}_{}", DRIVER_URL, LATEST_RELEASE, browser_version)
                 };
                 log::debug!("Reading {} version from {}", &self.driver_name, driver_url);
                 let driver_version = read_content_from_link(driver_url)?;
@@ -79,9 +79,9 @@ impl BrowserManager for ChromeManager {
             _ => "",
         };
         match os {
-            "windows" => format!("{}{}/{}_win32.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
-            "macos" => format!("{}{}/{}_mac64{}.zip", CHROMEDRIVER_URL, driver_version, self.driver_name, m1),
-            _ => format!("{}{}/{}_linux64.zip", CHROMEDRIVER_URL, driver_version, self.driver_name),
+            "windows" => format!("{}{}/{}_win32.zip", DRIVER_URL, driver_version, self.driver_name),
+            "macos" => format!("{}{}/{}_mac64{}.zip", DRIVER_URL, driver_version, self.driver_name, m1),
+            _ => format!("{}{}/{}_linux64.zip", DRIVER_URL, driver_version, self.driver_name),
         }
     }
 

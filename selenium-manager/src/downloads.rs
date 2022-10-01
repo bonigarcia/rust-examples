@@ -4,6 +4,7 @@ use std::io::copy;
 use std::io::Cursor;
 
 use tempfile::{Builder, TempDir};
+use crate::files::parse_version;
 
 #[tokio::main]
 pub async fn download_driver_to_tmp_folder(url: String) -> Result<(TempDir, String), Box<dyn Error>> {
@@ -36,5 +37,5 @@ pub async fn download_driver_to_tmp_folder(url: String) -> Result<(TempDir, Stri
 
 #[tokio::main]
 pub async fn read_content_from_link(url: String) -> Result<String, Box<dyn Error>> {
-    Ok(reqwest::get(url).await?.text().await?)
+    Ok(parse_version(reqwest::get(url).await?.text().await?))
 }
