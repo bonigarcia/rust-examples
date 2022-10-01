@@ -74,13 +74,20 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String {
-        let m1 = match arch {
-            "aarch64" => "_m1",
-            _ => "",
+        let mut m1 = match arch {
+            "aarch64" => "64_m1",
+            _ => "64",
         };
+        // Difference in format from chromedriver 105 and before to 106. See:
+        // https://chromedriver.storage.googleapis.com/index.html?path=104.0.5112.79/
+        // https://chromedriver.storage.googleapis.com/index.html?path=105.0.5195.52/
+        // https://chromedriver.storage.googleapis.com/index.html?path=106.0.5249.61/
+        if driver_version.starts_with("106") {
+            m1 = "_arm64";
+        }
         match os {
             "windows" => format!("{}{}/{}_win32.zip", DRIVER_URL, driver_version, self.driver_name),
-            "macos" => format!("{}{}/{}_mac64{}.zip", DRIVER_URL, driver_version, self.driver_name, m1),
+            "macos" => format!("{}{}/{}_mac{}.zip", DRIVER_URL, driver_version, self.driver_name, m1),
             _ => format!("{}{}/{}_linux64.zip", DRIVER_URL, driver_version, self.driver_name),
         }
     }
