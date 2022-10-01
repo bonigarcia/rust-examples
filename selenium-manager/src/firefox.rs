@@ -2,10 +2,8 @@ use std::error::Error;
 use std::path::PathBuf;
 
 use crate::browser::{BrowserManager, detect_browser_version};
-
 use crate::files::compose_driver_path_in_cache;
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
-
 
 const BROWSER_NAME: &str = "firefox";
 const DRIVER_NAME: &str = "geckodriver";
