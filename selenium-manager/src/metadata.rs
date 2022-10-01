@@ -42,21 +42,29 @@ fn now_unix_timestamp() -> u64 {
     SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs()
 }
 
+fn new_metadata() -> Metadata {
+    log::trace!("Metadata file does not exist. Creating a new one");
+    Metadata { browsers: Vec::new(), drivers: Vec::new() }
+}
+
 pub fn get_metadata() -> Metadata {
     let metadata_path = get_cache_folder().join(METADATA_FILE);
     log::trace!("Reading metadata from {}", metadata_path.display());
 
     if metadata_path.exists() {
         let metadata_file = File::open(&metadata_path).unwrap();
-        let _metadata_content = fs::read_to_string(&metadata_path).unwrap();
-        let mut metadata: Metadata = serde_json::from_reader(&metadata_file).unwrap();
-        let now = now_unix_timestamp();
-        metadata.browsers.retain(|b| b.browser_ttl > now);
-        metadata.drivers.retain(|d| d.driver_ttl > now);
+        let metadata: Metadata = match serde_json::from_reader(&metadata_file) {
+            Ok::<Metadata, serde_json::Error>(mut meta)  => {
+                let now = now_unix_timestamp();
+                meta.browsers.retain(|b| b.browser_ttl > now);
+                meta.drivers.retain(|d| d.driver_ttl > now);
+                meta
+            },
+            Err(_e) => new_metadata(),
+        };
         metadata
     } else {
-        log::trace!("Metadata file does not exist. Creating a new one");
-        Metadata { browsers: Vec::new(), drivers: Vec::new() }
+        new_metadata()
     }
 }
 
