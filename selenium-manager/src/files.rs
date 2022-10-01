@@ -11,7 +11,7 @@ use tar::Archive;
 use zip::ZipArchive;
 
 const CACHE_FOLDER: &str = ".cache/selenium";
-const ZIP: &str = ".zip";
+const ZIP: &str = "zip";
 
 pub fn clear_cache() {
     let cache_path = compose_cache_folder();
@@ -29,7 +29,11 @@ pub fn create_path_if_not_exists(path: &Path) {
 
 pub fn uncompress(compressed_file: &String, target: PathBuf) {
     let file = File::open(compressed_file).unwrap();
-    if compressed_file.ends_with(ZIP) {
+    let kind = infer::get_from_path(compressed_file).unwrap().unwrap();
+    let extension = kind.extension();
+    log::trace!("The detected extension of the compressed file is {}", extension);
+
+    if extension.eq_ignore_ascii_case(ZIP) {
         unzip(file, target);
     } else {
         untargz(file, target);
