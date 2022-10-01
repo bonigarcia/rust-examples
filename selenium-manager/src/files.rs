@@ -12,6 +12,7 @@ use zip::ZipArchive;
 
 const CACHE_FOLDER: &str = ".cache/selenium";
 const ZIP: &str = "zip";
+const GZ: &str = "gz";
 
 pub fn clear_cache() {
     let cache_path = compose_cache_folder();
@@ -35,8 +36,13 @@ pub fn uncompress(compressed_file: &String, target: PathBuf) {
 
     if extension.eq_ignore_ascii_case(ZIP) {
         unzip(file, target);
-    } else {
+    } else if extension.eq_ignore_ascii_case(GZ) {
         untargz(file, target);
+    }
+    else {
+        let error_msg = format!("Downloaded file cannot be uncompressed ({} extension)", extension);
+        log::error!("{}", error_msg);
+        panic!("{}", error_msg);
     }
 }
 
