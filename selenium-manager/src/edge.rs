@@ -54,9 +54,9 @@ impl BrowserManager for EdgeManager {
         let mut metadata = get_metadata();
 
         match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
-            Some(v) => {
+            Some(driver_version) => {
                 log::trace!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
-                Ok(v)
+                Ok(driver_version)
             }
             _ => {
                 let driver_url = if browser_version.is_empty() {

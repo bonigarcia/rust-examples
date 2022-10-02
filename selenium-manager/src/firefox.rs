@@ -52,12 +52,12 @@ impl BrowserManager for FirefoxManager {
         let mut metadata = get_metadata();
 
         match get_driver_version_from_metadata(&metadata.drivers, self.driver_name, browser_version) {
-            Some(v) => {
+            Some(driver_version) => {
                 log::trace!("Driver TTL is valid. Getting {} version from metadata", &self.driver_name);
-                Ok(v)
+                Ok(driver_version)
             }
             _ => {
-                // TODO use online info to get this driver version. See: https://github.com/mozilla/geckodriver/issues/2049
+                // TODO use online info to discover geckodriver version. See: https://github.com/mozilla/geckodriver/issues/2049
                 let driver_version = LATEST_RELEASE.to_string();
 
                 if !browser_version.is_empty() {
