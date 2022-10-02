@@ -35,7 +35,6 @@ pub async fn download_driver_to_tmp_folder(url: String) -> Result<(TempDir, Stri
     Ok((tmp_dir, target_path))
 }
 
-
 #[tokio::main]
 pub async fn read_content_from_link(url: String) -> Result<String, Box<dyn Error>> {
     Ok(parse_version(reqwest::get(url).await?.text().await?))

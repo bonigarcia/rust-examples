@@ -67,7 +67,6 @@ pub fn unzip(file: File, target: PathBuf) {
             if let Some(p) = target.parent() {
                 create_path_if_not_exists(p);
             }
-
             let mut outfile = File::create(&target).unwrap();
 
             // Set permissions in Unix-like systems
@@ -81,7 +80,6 @@ pub fn unzip(file: File, target: PathBuf) {
             }
 
             io::copy(&mut file, &mut outfile).unwrap();
-
             break;
         }
     }

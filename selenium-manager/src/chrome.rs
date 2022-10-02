@@ -71,7 +71,6 @@ impl BrowserManager for ChromeManager {
                     metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));
                     write_metadata(&metadata);
                 }
-
                 Ok(driver_version)
             }
         }
