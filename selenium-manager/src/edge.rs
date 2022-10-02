@@ -4,6 +4,8 @@ use std::path::PathBuf;
 use crate::downloads::read_content_from_link;
 use crate::files::compose_driver_path_in_cache;
 use crate::manager::{BrowserManager, detect_browser_version};
+use crate::manager::ARCH::{ARM64, X32};
+use crate::manager::OS::{MACOS, WINDOWS};
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
 
 const BROWSER_NAME: &str = "edge";
@@ -32,12 +34,14 @@ impl BrowserManager for EdgeManager {
     }
 
     fn get_browser_version(&self, os: &str) -> Option<String> {
-        let (shell, flag, args) = match os {
-            "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Microsoft\\Edge\\Application\\msedge.exe' get Version /value"#,
-                                            r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Microsoft\\Edge\\Application\\msedge.exe' get Version /value"#,
-                                            r#"REG QUERY HKCU\Software\Microsoft\Edge\BLBeacon /v version"#)),
-            "macos" => ("sh", "-c", vec!(r#"/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge -version"#)),
-            _ => ("sh", "-c", vec!("microsoft-edge --version")),
+        let (shell, flag, args) = if WINDOWS.is(os) {
+            ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Microsoft\\Edge\\Application\\msedge.exe' get Version /value"#,
+                               r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Microsoft\\Edge\\Application\\msedge.exe' get Version /value"#,
+                               r#"REG QUERY HKCU\Software\Microsoft\Edge\BLBeacon /v version"#))
+        } else if MACOS.is(os) {
+            ("sh", "-c", vec!(r#"/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge -version"#))
+        } else {
+            ("sh", "-c", vec!("microsoft-edge --version"))
         };
         detect_browser_version(self.browser_name, shell, flag, args)
     }
@@ -74,21 +78,18 @@ impl BrowserManager for EdgeManager {
     }
 
     fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String {
-        let driver_label = if os.eq("windows") {
-            if arch.eq("aarch64") {
+        let driver_label = if WINDOWS.is(os) {
+            if ARM64.is(arch) {
                 "arm64"
-            }
-            else if arch.eq("x86") {
+            } else if X32.is(arch) {
                 "win32"
-            }
-            else {
+            } else {
                 "win64"
             }
-        } else if os.eq("macos") {
-            if arch.eq("aarch64") {
+        } else if MACOS.is(os) {
+            if ARM64.is(arch) {
                 "mac64_m1"
-            }
-            else {
+            } else {
                 "mac64"
             }
         } else {
@@ -98,21 +99,18 @@ impl BrowserManager for EdgeManager {
     }
 
     fn get_driver_path_in_cache(&self, driver_version: &str, os: &str, arch: &str) -> PathBuf {
-        let arch_folder = if os.eq("windows") {
-            if arch.eq("aarch64") {
+        let arch_folder = if WINDOWS.is(os) {
+            if ARM64.is(arch) {
                 "win-arm64"
-            }
-            else if arch.eq("x86") {
+            } else if X32.is(arch) {
                 "win32"
-            }
-            else {
+            } else {
                 "win64"
             }
-        } else if os.eq("macos") {
-            if arch.eq("aarch64") {
+        } else if MACOS.is(os) {
+            if ARM64.is(arch) {
                 "mac-arm64"
-            }
-            else {
+            } else {
                 "mac64"
             }
         } else {

@@ -28,6 +28,42 @@ pub trait BrowserManager {
     }
 }
 
+#[allow(dead_code)]
+#[allow(clippy::upper_case_acronyms)]
+pub enum OS { WINDOWS, MACOS, LINUX }
+
+impl OS {
+    pub fn to_str(&self) -> &str {
+        match self {
+            OS::WINDOWS => "windows",
+            OS::MACOS => "macos",
+            OS::LINUX => "linux",
+        }
+    }
+
+    pub fn is(&self, os: &str) -> bool {
+        self.to_str().eq_ignore_ascii_case(os)
+    }
+}
+
+#[allow(dead_code)]
+#[allow(clippy::upper_case_acronyms)]
+pub enum ARCH { X32, X64, ARM64 }
+
+impl ARCH {
+    pub fn to_str(&self) -> &str {
+        match self {
+            ARCH::X32 => "x86",
+            ARCH::X64 => "x86_64",
+            ARCH::ARM64 => "aarch64",
+        }
+    }
+
+    pub fn is(&self, arch: &str) -> bool {
+        self.to_str().eq_ignore_ascii_case(arch)
+    }
+}
+
 pub fn run_shell_command(command: &str, flag: &str, args: &str) -> Result<String, Box<dyn Error>> {
     log::debug!("Running {} command: {:?}",command, args);
     let output = Command::new(command)

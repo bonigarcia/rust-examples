@@ -4,6 +4,8 @@ use std::path::PathBuf;
 use crate::downloads::read_content_from_link;
 use crate::files::compose_driver_path_in_cache;
 use crate::manager::{BrowserManager, detect_browser_version, get_major_version};
+use crate::manager::ARCH::ARM64;
+use crate::manager::OS::{MACOS, WINDOWS};
 use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, get_metadata, write_metadata};
 
 const BROWSER_NAME: &str = "chrome";
@@ -31,13 +33,15 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_browser_version(&self, os: &str) -> Option<String> {
-        let (shell, flag, args) = match os {
-            "windows" => ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                            r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                            r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
-                                            r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#)),
-            "macos" => ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#)),
-            _ => ("sh", "-c", vec!("google-chrome --version")),
+        let (shell, flag, args) = if WINDOWS.is(os) {
+            ("cmd", "/C", vec!(r#"wmic datafile where name='%PROGRAMFILES:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                               r#"wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                               r#"wmic datafile where name='%LOCALAPPDATA:\=\\%\\Google\\Chrome\\Application\\chrome.exe' get Version /value"#,
+                               r#"REG QUERY HKCU\Software\Google\Chrome\BLBeacon /v version"#))
+        } else if MACOS.is(os) {
+            ("sh", "-c", vec!(r#"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version"#))
+        } else {
+            ("sh", "-c", vec!("google-chrome --version"))
         };
         detect_browser_version(self.browser_name, shell, flag, args)
     }
@@ -74,32 +78,39 @@ impl BrowserManager for ChromeManager {
     }
 
     fn get_driver_url(&self, driver_version: &str, os: &str, arch: &str) -> String {
-        let mut m1 = match arch {
-            "aarch64" => "64_m1",
-            _ => "64",
+        let driver_label = if WINDOWS.is(os) {
+            "win32"
+        } else if MACOS.is(os) {
+            if ARM64.is(arch) {
+                // As of chromedriver 106, the naming convention for macOS ARM64 releases changed. See:
+                // https://groups.google.com/g/chromedriver-users/c/JRuQzH3qr2c
+                let major_driver_version = get_major_version(driver_version).parse::<i32>().unwrap();
+                if major_driver_version < 106 {
+                    "mac64_m1"
+                } else {
+                    "mac_arm64"
+                }
+            } else {
+                "mac64"
+            }
+        } else {
+            "linux64"
         };
-        // As of chromedriver 106, the naming convention for macOS ARM64 releases changed. See:
-        // https://groups.google.com/g/chromedriver-users/c/JRuQzH3qr2c
-        let major_driver_version = get_major_version(driver_version).parse::<i32>().unwrap();
-        if major_driver_version >= 106 {
-            m1 = "_arm64";
-        }
-        match os {
-            "windows" => format!("{}{}/{}_win32.zip", DRIVER_URL, driver_version, self.driver_name),
-            "macos" => format!("{}{}/{}_mac{}.zip", DRIVER_URL, driver_version, self.driver_name, m1),
-            _ => format!("{}{}/{}_linux64.zip", DRIVER_URL, driver_version, self.driver_name),
-        }
+        format!("{}{}/{}_{}.zip", DRIVER_URL, driver_version, self.driver_name, driver_label)
     }
 
     fn get_driver_path_in_cache(&self, driver_version: &str, os: &str, arch: &str) -> PathBuf {
-        let mut arch_folder = match os {
-            "windows" => "win32",
-            "macos" => "mac64",
-            _ => "linux64",
+        let arch_folder = if WINDOWS.is(os) {
+            "win32"
+        } else if MACOS.is(os) {
+            if ARM64.is(arch) {
+                "mac-arm64"
+            } else {
+                "mac64"
+            }
+        } else {
+            "linux64"
         };
-        if os.eq("macos") && arch.eq("aarch64") {
-            arch_folder = "mac-arm64";
-        }
         compose_driver_path_in_cache(self.driver_name, os, arch_folder, driver_version)
     }
 }

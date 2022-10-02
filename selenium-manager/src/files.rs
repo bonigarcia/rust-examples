@@ -10,6 +10,8 @@ use regex::Regex;
 use tar::Archive;
 use zip::ZipArchive;
 
+use crate::manager::OS::WINDOWS;
+
 const CACHE_FOLDER: &str = ".cache/selenium";
 const ZIP: &str = "zip";
 const GZ: &str = "gz";
@@ -38,8 +40,7 @@ pub fn uncompress(compressed_file: &String, target: PathBuf) {
         unzip(file, target);
     } else if extension.eq_ignore_ascii_case(GZ) {
         untargz(file, target);
-    }
-    else {
+    } else {
         let error_msg = format!("Downloaded file cannot be uncompressed ({} extension)", extension);
         log::error!("{}", error_msg);
         panic!("{}", error_msg);
@@ -110,9 +111,10 @@ pub fn get_driver_filename(driver_name: &str, os: &str) -> String {
 }
 
 pub fn get_binary_extension(os: &str) -> &str {
-    match os {
-        "windows" => ".exe",
-        _ => "",
+    if WINDOWS.is(os) {
+        ".exe"
+    } else {
+        ""
     }
 }
 
