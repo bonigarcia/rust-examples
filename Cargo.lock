@@ -1367,7 +1367,6 @@ dependencies = [
  "clap",
  "directories 4.0.1",
  "env_logger",
- "exitcode",
  "flate2",
  "infer",
  "log",
