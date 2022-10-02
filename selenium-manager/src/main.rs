@@ -8,18 +8,18 @@ use env_logger::Target::Stdout;
 use log::Level;
 use log::LevelFilter::{Debug, Info, Trace};
 
-use crate::browser::BrowserManager;
 use crate::chrome::ChromeManager;
 use crate::edge::EdgeManager;
 use crate::files::clear_cache;
 use crate::firefox::FirefoxManager;
+use crate::manager::BrowserManager;
 
-mod browser;
 mod chrome;
 mod downloads;
 mod edge;
 mod files;
 mod firefox;
+mod manager;
 mod metadata;
 
 /// Automated driver management for Selenium
