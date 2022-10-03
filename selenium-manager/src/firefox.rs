@@ -35,8 +35,7 @@ impl BrowserManager for FirefoxManager {
     fn get_browser_version(&self, os: &str) -> Option<String> {
         let (shell, flag, args) = if WINDOWS.is(os) {
             ("cmd", "/C", vec!(r#"cmd.exe /C wmic datafile where name='%PROGRAMFILES:\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value"#,
-                               r#"cmd.exe /C wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value' get Version /value"#,
-                               r#"REG QUERY "HKCU\Software\Mozilla\Mozilla Firefox" /v CurrentVersion"#))
+                               r#"cmd.exe /C wmic datafile where name='%PROGRAMFILES(X86):\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value' get Version /value"#))
         } else if MACOS.is(os) {
             ("sh", "-c", vec!(r#"/Applications/Firefox.app/Contents/MacOS/firefox -v"#))
         } else {
