@@ -1,5 +1,6 @@
 use std::error::Error;
 use std::path::PathBuf;
+use crate::downloads::read_redirect_from_link;
 
 use crate::files::compose_driver_path_in_cache;
 use crate::manager::{BrowserManager, detect_browser_version};
@@ -9,8 +10,8 @@ use crate::metadata::{create_driver_metadata, get_driver_version_from_metadata, 
 
 const BROWSER_NAME: &str = "firefox";
 const DRIVER_NAME: &str = "geckodriver";
-const DRIVER_URL: &str = "https://github.com/mozilla/geckodriver/releases/download/";
-const LATEST_RELEASE: &str = "0.31.0";
+const DRIVER_URL: &str = "https://github.com/mozilla/geckodriver/releases/";
+const LATEST_RELEASE: &str = "latest";
 
 pub struct FirefoxManager {
     pub browser_name: &'static str,
@@ -57,8 +58,8 @@ impl BrowserManager for FirefoxManager {
                 Ok(driver_version)
             }
             _ => {
-                // TODO use online info to discover geckodriver version. See: https://github.com/mozilla/geckodriver/issues/2049
-                let driver_version = LATEST_RELEASE.to_string();
+                let latest_url = format!("{}{}", DRIVER_URL, LATEST_RELEASE);
+                let driver_version = read_redirect_from_link(latest_url)?;
 
                 if !browser_version.is_empty() {
                     metadata.drivers.push(create_driver_metadata(browser_version, self.driver_name, &driver_version));
@@ -88,7 +89,7 @@ impl BrowserManager for FirefoxManager {
         } else {
             "linux64.tar.gz"
         };
-        format!("{}v{}/{}-v{}-{}", DRIVER_URL, driver_version, self.driver_name, driver_version, driver_label)
+        format!("{}download/v{}/{}-v{}-{}", DRIVER_URL, driver_version, self.driver_name, driver_version, driver_label)
     }
 
     fn get_driver_path_in_cache(&self, driver_version: &str, os: &str, arch: &str) -> PathBuf {
