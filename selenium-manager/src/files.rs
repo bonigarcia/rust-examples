@@ -74,9 +74,7 @@ pub fn unzip(file: File, target: PathBuf) {
             {
                 use std::os::unix::fs::PermissionsExt;
 
-                if let Some(mode) = file.unix_mode() {
-                    fs::set_permissions(&target, fs::Permissions::from_mode(mode)).unwrap();
-                }
+                fs::set_permissions(&target, fs::Permissions::from_mode(0o755)).unwrap();
             }
 
             io::copy(&mut file, &mut outfile).unwrap();
