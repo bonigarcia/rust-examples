@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::path::PathBuf;
-use crate::downloads::read_redirect_from_link;
 
+use crate::downloads::read_redirect_from_link;
 use crate::files::compose_driver_path_in_cache;
 use crate::manager::{BrowserManager, detect_browser_version};
 use crate::manager::ARCH::{ARM64, X32};
