@@ -45,7 +45,7 @@ jobs:
           cd selenium-manager
           cargo build --target $(uname -m)-unknown-linux-musl --release
       - name: "Find binary"
-        run: find ../target -name "selenium-manager"
+        run: find ./target -name "selenium-manager"
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
