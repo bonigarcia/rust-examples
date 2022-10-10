@@ -16,6 +16,7 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
+          ls
           cd rust-examples/selenium-manger
           cargo build --release
       - name: "Brag #1"
@@ -48,6 +49,7 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
+          ls
           cd rust-examples/selenium-manger
           cargo build --target $(uname -m)-unknown-linux-musl --release
       - name: "Brag #1"
@@ -70,6 +72,7 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
+          dir
           cd rust-examples/selenium-manger
           cargo build --release
       - uses: actions/upload-artifact@v3
