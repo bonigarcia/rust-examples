@@ -1,0 +1,79 @@
+name: release-selenium-manager
+
+on: workflow_dispatch
+
+jobs:
+
+  macos:
+    name: "Build the macOS / AMD64 version of selenium-manager"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: "Remove Rust documentation"
+        run: rustup component remove rust-docs
+        continue-on-error: true
+      - name: "Update Rust to the latest stable version"
+        run: rustup update stable
+      - name: Build release version
+        run: |
+          cd selenium-manger
+          cargo build --release
+      - name: "Brag #1"
+        run: find ./target -name "selenium-manager"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: selenium-manager-macos-amd64
+          path: ./target/release/selenium-manager
+          retention-days: 6
+
+  linux:
+    name: "Build the Linux / AMD64 version of selenium-manager"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: "Install GCC"
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential
+          gcc --version
+      - name: "Add support for MUSL"
+        run: |
+          sudo apt update
+          sudo apt install -y musl-tools
+          rustup target add $(uname -m)-unknown-linux-musl
+      - name: "Remove Rust documentation"
+        run: rustup component remove rust-docs
+        continue-on-error: true
+      - name: "Update Rust to the latest stable version"
+        run: rustup update stable
+      - name: Build release version
+        run: |
+          cd selenium-manger
+          cargo build --target $(uname -m)-unknown-linux-musl --release
+      - name: "Brag #1"
+        run: find ./target -name "selenium-manager"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: selenium-manager-linux-amd64
+          path: ./target/x86_64-unknown-linux-musl/release/selenium-manager
+          retention-days: 6
+
+  windows:
+    name: "Build the Windows / AMD64 version of selenium-manager"
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: "Remove Rust documentation"
+        run: rustup component remove rust-docs
+        continue-on-error: true
+      - name: "Update Rust to the latest stable version"
+        run: rustup update stable
+      - name: Build release version
+        run: |
+          cd selenium-manger
+          cargo build --release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: selenium-manager-windows-amd64
+          path: ./target/release/selenium-manager.exe
+          retention-days: 6
