@@ -15,8 +15,6 @@ jobs:
         run: |
           cd selenium-manager
           cargo build --release
-      - name: "Find binary"
-        run: find ../target -name "selenium-manager"
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
@@ -33,24 +31,19 @@ jobs:
       - name: "Install dependencies"
         run: |
           sudo apt update
-          sudo apt install -y build-essential
-          gcc --version
-          sudo apt install -y musl-tools
-          rustup target add $(uname -m)-unknown-linux-musl
+          sudo apt upgrade
           sudo apt install -y pkg-config libssl-dev
       - name: "Update Rust"
         run: rustup update stable
       - name: "Build release"
         run: |
           cd selenium-manager
-          cargo build --target $(uname -m)-unknown-linux-musl --release
-      - name: "Find binary"
-        run: find ./target -name "selenium-manager"
+          cargo build --release
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-linux-amd64
-          path: ./target/x86_64-unknown-linux-musl/release/selenium-manager
+          path: ./target/release/selenium-manager
           retention-days: 6
 
   windows:
