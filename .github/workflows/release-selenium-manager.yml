@@ -16,8 +16,7 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
-          ls
-          cd rust-examples/selenium-manger
+          cd selenium-manager
           cargo build --release
       - name: "Brag #1"
         run: find ../target -name "selenium-manager"
@@ -49,8 +48,7 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
-          ls
-          cd rust-examples/selenium-manger
+          cd selenium-manager
           cargo build --target $(uname -m)-unknown-linux-musl --release
       - name: "Brag #1"
         run: find ../target -name "selenium-manager"
@@ -72,8 +70,7 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
-          dir
-          cd rust-examples/selenium-manger
+          cd selenium-manager
           cargo build --release
       - uses: actions/upload-artifact@v3
         with:
