@@ -1,4 +1,4 @@
-name: release-selenium-manager
+name: build-selenium-manager
 
 on: workflow_dispatch
 
@@ -34,15 +34,15 @@ jobs:
         run: |
           cd selenium-manager
           cargo build --release
-      - name: "Tar resulting binary (to keep executable permission)"
+      - name: "Tar binary (to keep executable permission)"
         run: |
           cd target/release
-          tar -cvf ../../selenium-manager-linux-amd64.tar selenium-manager
+          tar -cvf ../../selenium-manager.tar selenium-manager
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-linux-amd64
-          path: selenium-manager-linux-amd64.tar
+          path: selenium-manager.tar
           retention-days: 6
 
   macos:
@@ -57,13 +57,13 @@ jobs:
         run: |
           cd selenium-manager
           cargo build --release
-      - name: "Tar resulting binary (to keep executable permission)"
+      - name: "Tar binary (to keep executable permission)"
         run: |
           cd target/release
-          tar -cvf ../../selenium-manager-macos-amd64.tar selenium-manager
+          tar -cvf ../../selenium-manager.tar selenium-manager
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-macos-amd64
-          path: selenium-manager-macos-amd64.tar
+          path: selenium-manager.tar
           retention-days: 6
