@@ -15,11 +15,13 @@ jobs:
         run: |
           cd selenium-manager
           cargo build --release
-      - name: "Upload release"
+      - name: "Compress resulting binary"
+        run: tar -czvf selenium-manager-windows-amd64.tar.gz ./target/release/selenium-manager.exe
+      - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-windows-amd64
-          path: ./target/release/selenium-manager.exe
+          path: selenium-manager-windows-amd64.tar.gz
           retention-days: 6
 
   linux:
@@ -34,13 +36,13 @@ jobs:
         run: |
           cd selenium-manager
           cargo build --release
-      - name: "Set executable permission to binary"
-        run: chmod +x ./target/release/selenium-manager
+      - name: "Compress resulting binary"
+        run: tar -czvf selenium-manager-linux-amd64.tar.gz ./target/release/selenium-manager
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-linux-amd64
-          path: ./target/release/selenium-manager
+          path: selenium-manager-linux-amd64.tar.gz
           retention-days: 6
 
   macos:
@@ -55,11 +57,11 @@ jobs:
         run: |
           cd selenium-manager
           cargo build --release
-      - name: "Set executable permission to binary"
-        run: chmod +x ./target/release/selenium-manager
+      - name: "Compress resulting binary"
+        run: tar -czvf selenium-manager-macos-amd64.tar.gz ./target/release/selenium-manager
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-macos-amd64
-          path: ./target/release/selenium-manager
+          path: selenium-manager-macos-amd64.tar.gz
           retention-days: 6
