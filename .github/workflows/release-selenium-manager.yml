@@ -5,7 +5,7 @@ on: workflow_dispatch
 jobs:
 
   macos:
-    name: "Build the macOS / AMD64 version of selenium-manager"
+    name: "Build selenium-manager for macOS"
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@master
@@ -16,18 +16,18 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
-          cd selenium-manger
+          cd rust-examples/selenium-manger
           cargo build --release
       - name: "Brag #1"
-        run: find ./target -name "selenium-manager"
+        run: find ../target -name "selenium-manager"
       - uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-macos-amd64
-          path: ./target/release/selenium-manager
+          path: ../target/release/selenium-manager
           retention-days: 6
 
   linux:
-    name: "Build the Linux / AMD64 version of selenium-manager"
+    name: "Build selenium-manager for Linux"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -48,18 +48,18 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
-          cd selenium-manger
+          cd rust-examples/selenium-manger
           cargo build --target $(uname -m)-unknown-linux-musl --release
       - name: "Brag #1"
-        run: find ./target -name "selenium-manager"
+        run: find ../target -name "selenium-manager"
       - uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-linux-amd64
-          path: ./target/x86_64-unknown-linux-musl/release/selenium-manager
+          path: ../target/x86_64-unknown-linux-musl/release/selenium-manager
           retention-days: 6
 
   windows:
-    name: "Build the Windows / AMD64 version of selenium-manager"
+    name: "Build selenium-manager for Windows"
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@master
@@ -70,10 +70,10 @@ jobs:
         run: rustup update stable
       - name: Build release version
         run: |
-          cd selenium-manger
+          cd rust-examples/selenium-manger
           cargo build --release
       - uses: actions/upload-artifact@v3
         with:
           name: selenium-manager-windows-amd64
-          path: ./target/release/selenium-manager.exe
+          path: ../target/release/selenium-manager.exe
           retention-days: 6
