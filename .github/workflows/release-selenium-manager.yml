@@ -37,7 +37,7 @@ jobs:
       - name: "Tar resulting binary (to keep executable permission)"
         run: |
           cd target/release
-          tar -cvf selenium-manager-linux-amd64.tar selenium-manager
+          tar -cvf ../../selenium-manager-linux-amd64.tar selenium-manager
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
@@ -60,7 +60,7 @@ jobs:
       - name: "Tar resulting binary (to keep executable permission)"
         run: |
           cd target/release
-          tar -cvf selenium-manager-macos-amd64.tar selenium-manager
+          tar -cvf ../../selenium-manager-macos-amd64.tar selenium-manager
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
