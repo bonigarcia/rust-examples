@@ -9,8 +9,6 @@ jobs:
     steps:
       - name: "Checkout project"
         uses: actions/checkout@master
-      - name: "Update Rust"
-        run: rustup update stable
       - name: "Build release"
         run: |
           cd selenium-manager
@@ -18,7 +16,7 @@ jobs:
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
-          name: selenium-manager-windows-amd64
+          name: selenium-manager_windows-x64
           path: ./target/release/selenium-manager.exe
           retention-days: 6
 
@@ -28,8 +26,6 @@ jobs:
     steps:
       - name: "Checkout project"
         uses: actions/checkout@master
-      - name: "Update Rust"
-        run: rustup update stable
       - name: "Build release"
         run: |
           cd selenium-manager
@@ -41,7 +37,7 @@ jobs:
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
-          name: selenium-manager-linux-amd64
+          name: selenium-manager_linux-x64
           path: selenium-manager.tar
           retention-days: 6
 
@@ -51,8 +47,6 @@ jobs:
     steps:
       - name: "Checkout project"
         uses: actions/checkout@master
-      - name: "Update Rust"
-        run: rustup update stable
       - name: "Build release"
         run: |
           cd selenium-manager
@@ -64,6 +58,6 @@ jobs:
       - name: "Upload binary"
         uses: actions/upload-artifact@v3
         with:
-          name: selenium-manager-macos-amd64
+          name: selenium-manager_macos-x64
           path: selenium-manager.tar
           retention-days: 6
