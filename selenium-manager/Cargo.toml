@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.0.22", features = ["derive"] }
 log = "0.4.0"
-env_logger = "0.9.1"
+env_logger = "0.9.3"
 regex = "1.6.0"
 tokio = { version = "1.21.2", features = ["full"] }
 tempfile = "3.3.0"
