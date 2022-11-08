@@ -9,4 +9,4 @@ edition = "2021"
 regex = "1.6.0"
 
 [dev-dependencies]
-assert_cmd = "2.0.5"
+assert_cmd = "2.0.6"
