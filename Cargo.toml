@@ -18,4 +18,5 @@ members = [
     "traits",
     "json",
     "metadata",
+    "hashmap",
 ]
