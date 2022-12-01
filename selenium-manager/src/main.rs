@@ -77,25 +77,36 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut driver_version = cli.driver_version;
     if driver_version.is_empty() {
-      let mut browser_version = cli.browser_version;
-      if browser_version.is_empty() {
-        match browser_manager.get_browser_version(os) {
-          Some(version) => {
-            browser_version = version;
-            log::debug!("Detected browser: {} {}", browser_name, browser_version);
-          }
-          None => {
-            log::warn!("The version of {} cannot be detected. Trying with latest driver version", browser_name);
-          }
+        let mut browser_version = cli.browser_version;
+        if browser_version.is_empty() {
+            match browser_manager.get_browser_version(os) {
+                Some(version) => {
+                    browser_version = version;
+                    log::debug!("Detected browser: {} {}", browser_name, browser_version);
+                }
+                None => {
+                    log::warn!(
+                        "The version of {} cannot be detected. Trying with latest driver version",
+                        browser_name
+                    );
+                }
+            }
         }
-      }
-      driver_version = browser_manager.get_driver_version(&browser_version, os)?;
-      log::debug!("Required driver: {} {}", browser_manager.get_driver_name(), driver_version);
+        driver_version = browser_manager.get_driver_version(&browser_version, os)?;
+        log::debug!(
+            "Required driver: {} {}",
+            browser_manager.get_driver_name(),
+            driver_version
+        );
     }
 
     let driver_path = browser_manager.get_driver_path_in_cache(&driver_version, os, arch);
     if driver_path.exists() {
-        log::debug!("{} {} already in the cache", browser_manager.get_driver_name(), driver_version);
+        log::debug!(
+            "{} {} already in the cache",
+            browser_manager.get_driver_name(),
+            driver_version
+        );
     } else {
         browser_manager.download_driver(&driver_version, os, arch)?;
     }
@@ -125,7 +136,11 @@ fn setup_logging(cli: &Cli) {
                 Level::Warn => level_style.set_color(Color::Yellow),
                 Level::Error => level_style.set_color(Color::Red).set_bold(true),
             };
-            writeln!(buf, "{}\t{}", level_style.value(record.level()), record.args()
+            writeln!(
+                buf,
+                "{}\t{}",
+                level_style.value(record.level()),
+                record.args()
             )
         })
         .init();

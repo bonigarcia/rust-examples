@@ -8,7 +8,6 @@ use std::io::Cursor;
 use tempfile::Builder;
 use zip::ZipArchive;
 
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let tmp_dir = Builder::new().prefix("example").tempdir()?;
@@ -51,7 +50,11 @@ fn unzip(zip_file: String) {
             println!("File {} extracted to {}", i, out_path.display());
             fs::create_dir_all(&out_path).unwrap();
         } else {
-            println!("File {} extracted to {} ({} bytes)", i, out_path.display(), file.size()
+            println!(
+                "File {} extracted to {} ({} bytes)",
+                i,
+                out_path.display(),
+                file.size()
             );
             if let Some(p) = out_path.parent() {
                 if !p.exists() {

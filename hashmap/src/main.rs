@@ -28,11 +28,11 @@ fn main() {
 
     match chrome_map.get(&BrowserPath::new("Linux", "stable")) {
         Some(p) => println!("Chrome stable in linux is in {p}"),
-        _ => println!("Chrome stable in linux is not supported")
+        _ => println!("Chrome stable in linux is not supported"),
     }
 
     match chrome_map.get(&BrowserPath::new("Linux", "unstable")) {
         Some(p) => println!("Chrome unstable in linux is in {p}"),
-        _ => println!("Chrome unstable in linux is not supported")
+        _ => println!("Chrome unstable in linux is not supported"),
     }
 }

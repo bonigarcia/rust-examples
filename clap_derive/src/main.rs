@@ -1,8 +1,8 @@
 use clap::Parser;
-use log::LevelFilter::{Debug, Info, Trace};
-use std::io::Write;
 use env_logger::fmt::Color;
 use log::Level;
+use log::LevelFilter::{Debug, Info, Trace};
+use std::io::Write;
 
 /// Simple program using --debug and --trace
 #[derive(Parser, Debug)]

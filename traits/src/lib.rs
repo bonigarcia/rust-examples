@@ -3,8 +3,8 @@ pub trait BrowserManager {
 }
 
 pub struct ChromeManager {
-    pub browser_name : &'static str,
-    pub driver_name : &'static str,
+    pub browser_name: &'static str,
+    pub driver_name: &'static str,
 }
 
 impl BrowserManager for ChromeManager {
@@ -14,8 +14,8 @@ impl BrowserManager for ChromeManager {
 }
 
 pub struct FirefoxManager {
-    pub browser_name : &'static str,
-    pub driver_name : &'static str,
+    pub browser_name: &'static str,
+    pub driver_name: &'static str,
 }
 
 impl BrowserManager for FirefoxManager {

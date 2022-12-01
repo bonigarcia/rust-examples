@@ -1,8 +1,8 @@
+use std::fs::write;
 use std::fs::File;
 use std::io::Read;
 use std::ops::Add;
 use std::time::Duration;
-use std::fs::write;
 
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
@@ -57,11 +57,25 @@ fn main() {
 
     let mut metadata: Metadata = serde_json::from_str(data).unwrap();
 
-    println!("{} {} {}", metadata.browsers[0].browser_name, metadata.browsers[0].browser_version, metadata.browsers[0].browser_version_ttl);
-    println!("{} {} {}", metadata.browsers[0].driver_name, metadata.browsers[0].driver_version, metadata.browsers[0].driver_version_ttl);
+    println!(
+        "{} {} {}",
+        metadata.browsers[0].browser_name,
+        metadata.browsers[0].browser_version,
+        metadata.browsers[0].browser_version_ttl
+    );
+    println!(
+        "{} {} {}",
+        metadata.browsers[0].driver_name,
+        metadata.browsers[0].driver_version,
+        metadata.browsers[0].driver_version_ttl
+    );
 
-    metadata.browsers[0].browser_version_ttl = metadata.browsers[0].browser_version_ttl.add(Duration::from_secs(TTL_BROWSERS));
-    metadata.browsers[0].driver_version_ttl = metadata.browsers[0].driver_version_ttl.add(Duration::from_secs(TTL_DRIVERS));
+    metadata.browsers[0].browser_version_ttl = metadata.browsers[0]
+        .browser_version_ttl
+        .add(Duration::from_secs(TTL_BROWSERS));
+    metadata.browsers[0].driver_version_ttl = metadata.browsers[0]
+        .driver_version_ttl
+        .add(Duration::from_secs(TTL_DRIVERS));
 
     // Write to file
     let filename = "out.json";
@@ -73,15 +87,27 @@ fn main() {
     file.read_to_string(&mut data).unwrap();
     let metadata2: Metadata = serde_json::from_str(&data).unwrap();
 
-    println!("{} {} {}", metadata2.browsers[0].browser_name, metadata2.browsers[0].browser_version, metadata2.browsers[0].browser_version_ttl);
-    println!("{} {} {}", metadata2.browsers[0].driver_name, metadata2.browsers[0].driver_version, metadata2.browsers[0].driver_version_ttl);
+    println!(
+        "{} {} {}",
+        metadata2.browsers[0].browser_name,
+        metadata2.browsers[0].browser_version,
+        metadata2.browsers[0].browser_version_ttl
+    );
+    println!(
+        "{} {} {}",
+        metadata2.browsers[0].driver_name,
+        metadata2.browsers[0].driver_version,
+        metadata2.browsers[0].driver_version_ttl
+    );
 
     // Metadata #3
-    let browser_time = OffsetDateTime::from_unix_timestamp(now.unix_timestamp() + (TTL_BROWSERS as i64)).unwrap();
-    let driver_time = OffsetDateTime::from_unix_timestamp(now.unix_timestamp() + (TTL_DRIVERS as i64)).unwrap();
+    let browser_time =
+        OffsetDateTime::from_unix_timestamp(now.unix_timestamp() + (TTL_BROWSERS as i64)).unwrap();
+    let driver_time =
+        OffsetDateTime::from_unix_timestamp(now.unix_timestamp() + (TTL_DRIVERS as i64)).unwrap();
 
     let mut metadata3 = Metadata {
-        browsers: Vec::new()
+        browsers: Vec::new(),
     };
     let chrome: Browser = Browser {
         browser_name: "chrome".to_string(),
@@ -89,14 +115,27 @@ fn main() {
         browser_version_ttl: browser_time,
         driver_name: "chromedriver".to_string(),
         driver_version: "107.xxxx".to_string(),
-        driver_version_ttl: driver_time
+        driver_version_ttl: driver_time,
     };
     metadata3.browsers.push(chrome);
 
     let filename2 = "out2.json";
-    write(&filename2, serde_json::to_string_pretty(&metadata3).unwrap()).unwrap();
+    write(
+        &filename2,
+        serde_json::to_string_pretty(&metadata3).unwrap(),
+    )
+    .unwrap();
 
-    println!("{} {} {}", metadata3.browsers[0].browser_name, metadata3.browsers[0].browser_version, metadata3.browsers[0].browser_version_ttl);
-    println!("{} {} {}", metadata3.browsers[0].driver_name, metadata3.browsers[0].driver_version, metadata3.browsers[0].driver_version_ttl);
-
+    println!(
+        "{} {} {}",
+        metadata3.browsers[0].browser_name,
+        metadata3.browsers[0].browser_version,
+        metadata3.browsers[0].browser_version_ttl
+    );
+    println!(
+        "{} {} {}",
+        metadata3.browsers[0].driver_name,
+        metadata3.browsers[0].driver_version,
+        metadata3.browsers[0].driver_version_ttl
+    );
 }

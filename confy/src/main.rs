@@ -39,7 +39,7 @@ fn main() -> Result<(), confy::ConfyError> {
         name: "Test".to_string(),
         ..cfg
     };
-    confy::store("confy_simple_app",None, &cfg)?;
+    confy::store("confy_simple_app", None, &cfg)?;
     println!("The updated toml file content is:");
     let mut content = String::new();
     std::fs::File::open(&file)
@@ -51,7 +51,6 @@ fn main() -> Result<(), confy::ConfyError> {
         name: "Test".to_string(),
         ..cfg
     };
-    std::fs::remove_dir_all(file.parent().unwrap())
-        .expect("Failed to remove directory");
+    std::fs::remove_dir_all(file.parent().unwrap()).expect("Failed to remove directory");
     Ok(())
 }

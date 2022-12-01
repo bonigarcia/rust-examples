@@ -1,8 +1,8 @@
+use directories::BaseDirs;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
-use directories::BaseDirs;
 
 static CACHE_FOLDER: &str = ".cache/selenium";
 
