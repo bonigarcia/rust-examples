@@ -30,7 +30,7 @@ const TTL_DRIVERS: u64 = 86400;
 fn main() {
     let now = OffsetDateTime::now_utc();
 
-    println!("Now is {}, which is {}", now.to_string(), now.unix_timestamp());
+    println!("Now is {}, which is {}", now, now.unix_timestamp());
 
     let data = r#"
 {

@@ -1,6 +1,6 @@
 use std::process::exit;
 use clap::{arg, Command};
-use exitcode;
+
 
 fn main() {
     let matches = Command::new("Selenium Manager")
