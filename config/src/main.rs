@@ -45,6 +45,13 @@ impl ManagerConfig {
             driver_version: "d1".to_string(),
         }
     }
+
+    pub fn clone(config: &ManagerConfig) -> ManagerConfig {
+        ManagerConfig {
+            browser_version: config.browser_version.as_str().to_string(),
+            driver_version: config.driver_version.as_str().to_string(),
+        }
+    }
 }
 
 fn main() {
@@ -55,7 +62,7 @@ fn main() {
     println!("The default browser version is {browser_version}");
     println!("The default driver version is {driver_version}");
 
-    let mut new_config = ManagerConfig::default();
+    let mut new_config = ManagerConfig::clone(manager.get_config());
     new_config.browser_version = "b2".to_string();
     new_config.driver_version = "d2".to_string();
 
