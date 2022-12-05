@@ -6,10 +6,18 @@ pub trait SeleniumManager {
 
     fn set_config(&mut self, config: ManagerConfig);
 
+    fn get_browser_version(&self) -> &str {
+        self.get_config().browser_version.as_str()
+    }
+
     fn set_browser_version(&mut self, browser_version: String) {
         let mut config = ManagerConfig::clone(self.get_config());
         config.browser_version = browser_version;
         self.set_config(config);
+    }
+
+    fn get_driver_version(&self) -> &str {
+        self.get_config().driver_version.as_str()
     }
 
     fn set_driver_version(&mut self, driver_version: String) {
@@ -69,8 +77,8 @@ impl ManagerConfig {
 fn main() {
     let mut manager: Box<dyn SeleniumManager> = ChromeManager::new();
 
-    let browser_version = manager.get_config().browser_version.as_str();
-    let driver_version = manager.get_config().driver_version.as_str();
+    let browser_version = manager.get_browser_version();
+    let driver_version = manager.get_driver_version();
     println!("The default browser version is {browser_version}");
     println!("The default driver version is {driver_version}");
 
