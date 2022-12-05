@@ -19,4 +19,5 @@ members = [
     "json",
     "metadata",
     "hashmap",
+    "config",
 ]
