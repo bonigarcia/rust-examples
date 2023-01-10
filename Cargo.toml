@@ -21,4 +21,5 @@ members = [
     "hashmap",
     "config",
     "thread_local",
+    "rc",
 ]
