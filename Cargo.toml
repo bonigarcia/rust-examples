@@ -20,4 +20,5 @@ members = [
     "metadata",
     "hashmap",
     "config",
+    "thread_local",
 ]

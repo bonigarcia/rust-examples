@@ -1624,6 +1624,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "thread_local"
+version = "0.1.0"
+
+[[package]]
 name = "time"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
