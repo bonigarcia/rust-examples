@@ -22,4 +22,5 @@ members = [
     "config",
     "thread_local",
     "rc",
+    "process_path",
 ]
