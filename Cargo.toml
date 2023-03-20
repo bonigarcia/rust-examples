@@ -23,4 +23,5 @@ members = [
     "thread_local",
     "rc",
     "process_path",
+    "is_exec",
 ]
