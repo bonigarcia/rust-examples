@@ -24,4 +24,5 @@ members = [
     "rc",
     "process_path",
     "is_exec",
+    "run_shell",
 ]
