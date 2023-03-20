@@ -3,6 +3,8 @@ use std::process::Command;
 
 pub const CRLF: &str = "\r\n";
 pub const LF: &str = "\n";
+pub const ENV_PROGRAM_FILES: &str = "PROGRAMFILES";
+pub const WMIC_COMMAND_ENV: &str = r#"SET "PFILES=%{}: (x86)=%" && call wmic datafile where name='%^PFILES:\=\\%{}' get Version /value"#;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let powershell_commands = vec![
@@ -24,6 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         r#"SET "PFILES=%PROGRAMFILES: (x86)=%" && call echo %^PFILES%*****"#.to_string(),
         r#"SET "PFILES=%PROGRAMFILES: (x86)=%" && call echo %^PFILES:\=\\%*****"#.to_string(),
         r#"SET "PFILES=%PROGRAMFILES: (x86)=%" && call wmic datafile where name='%^PFILES:\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value"#.to_string(),
+        format_two_args(WMIC_COMMAND_ENV, ENV_PROGRAM_FILES, r#"\\Mozilla Firefox\\firefox.exe"#),
     ];
     for command in cmd_commands {
         print!("{} -- ", command);
@@ -69,4 +72,8 @@ fn strip_trailing_newline(input: &str) -> &str {
         .strip_suffix(CRLF)
         .or_else(|| input.strip_suffix(LF))
         .unwrap_or(input)
+}
+
+pub fn format_two_args(string: &str, arg1: &str, arg2: &str) -> String {
+    string.replacen("{}", arg1, 1).replacen("{}", arg2, 2)
 }
