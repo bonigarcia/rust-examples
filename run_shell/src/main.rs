@@ -4,7 +4,7 @@ use std::process::Command;
 pub const CRLF: &str = "\r\n";
 pub const LF: &str = "\n";
 pub const ENV_PROGRAM_FILES: &str = "PROGRAMFILES";
-pub const WMIC_COMMAND_ENV: &str = r#"SET "PFILES=%{}: (x86)=%" && call wmic datafile where name='%^PFILES:\=\\%{}' get Version /value"#;
+pub const WMIC_COMMAND_ENV: &str = r#"set PFILES=%{}: (x86)=%&& call wmic datafile where name='!PFILES:\=\\!{}' get Version /value"#;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let powershell_commands = vec![
@@ -23,9 +23,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         r#"echo %PROGRAMFILES%"#.to_string(),
         r#"echo %PROGRAMFILES: (x86)=%****"#.to_string(),
         r#"echo %PROGRAMFILES(X86)%"#.to_string(),
-        r#"SET "PFILES=%PROGRAMFILES: (x86)=%" && call echo %^PFILES%*****"#.to_string(),
-        r#"SET "PFILES=%PROGRAMFILES: (x86)=%" && call echo %^PFILES:\=\\%*****"#.to_string(),
-        r#"SET "PFILES=%PROGRAMFILES: (x86)=%" && call wmic datafile where name='%^PFILES:\=\\%\\Mozilla Firefox\\firefox.exe' get Version /value"#.to_string(),
+        r#"set PFILES=%PROGRAMFILES: (x86)=%&& echo !PFILES!*****"#.to_string(),
+        r#"set PFILES=%PROGRAMFILES: (x86)=%&& echo !PFILES:\=\\!*****"#.to_string(),
+        r#"set PFILES=%PROGRAMFILES: (x86)=%&& wmic datafile where name='!PFILES:\=\\!\\Mozilla Firefox\\firefox.exe' get Version /value"#.to_string(),
         format_two_args(WMIC_COMMAND_ENV, ENV_PROGRAM_FILES, r#"\\Mozilla Firefox\\firefox.exe"#),
     ];
     for command in cmd_commands {
@@ -39,7 +39,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 pub fn run_shell_command(os: &str, command: String) -> Result<String, Box<dyn Error>> {
     let (shell, flag) = if os.eq_ignore_ascii_case("windows") {
-        ("cmd", "/C")
+        ("cmd", "/v/c")
     } else {
         ("sh", "-c")
     };
