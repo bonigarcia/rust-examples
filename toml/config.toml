@@ -1,0 +1,15 @@
+browser = "chrome"
+driver = "chromedriver"
+browser-version = "106"
+driver-version = "106.0.5249.61"
+
+browser-path = "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"
+os = "macos"
+arch = "x64"
+proxy = "myproxy:8080"
+browser-ttl = 0
+driver-ttl = 86400
+driver-mirror = "http://my-chromedriver-mirror.net"
+cache-path = "/my/custom/cache"
+
+debug = false

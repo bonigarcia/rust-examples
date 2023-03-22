@@ -25,4 +25,5 @@ members = [
     "process_path",
     "is_exec",
     "run_shell",
+    "toml",
 ]
