@@ -11,25 +11,25 @@ pub const ENV_PREFIX: &str = "SE_";
 const CACHE_FOLDER: &str = ".cache/selenium";
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let browser = StringKey("browser".to_string());
+    let browser = StringKey("browser".to_string(), "".to_string());
     println!("browser: {}", browser.get_value());
 
-    let driver = StringKey("driver".to_string());
+    let driver = StringKey("driver".to_string(), "".to_string());
     println!("driver: {}", driver.get_value());
 
-    let driver_ttl = IntegerKey("driver-ttl".to_string());
+    let driver_ttl = IntegerKey("driver-ttl".to_string(), 0);
     println!("driver-ttl: {}", driver_ttl.get_value());
 
-    let debug = BooleanKey("debug".to_string());
+    let debug = BooleanKey("debug".to_string(), true);
     println!("debug: {}", debug.get_value());
 
-    let no_string = StringKey("no-string".to_string());
+    let no_string = StringKey("no-string".to_string(), "Default".to_string());
     println!("no-string: {}", no_string.get_value());
 
-    let no_integer = IntegerKey("no-integer".to_string());
+    let no_integer = IntegerKey("no-integer".to_string(), 10);
     println!("no-integer: {}", no_integer.get_value());
 
-    let no_boolean = BooleanKey("no-boolean".to_string());
+    let no_boolean = BooleanKey("no-boolean".to_string(), false);
     println!("no-boolean: {}", no_boolean.get_value());
 
     Ok(())
@@ -42,7 +42,7 @@ fn get_env_name(key: &str) -> String {
     env_name
 }
 
-struct StringKey(String);
+struct StringKey(String, String);
 
 impl StringKey {
     fn get_value(&self) -> String {
@@ -51,12 +51,12 @@ impl StringKey {
         if config.contains_key(key) {
             config[key].as_str().unwrap().to_string()
         } else {
-            env::var(get_env_name(key)).unwrap_or_default()
+            env::var(get_env_name(key)).unwrap_or(self.1.to_owned())
         }
     }
 }
 
-struct IntegerKey(String);
+struct IntegerKey(String, i64);
 
 impl IntegerKey {
     fn get_value(&self) -> i64 {
@@ -68,12 +68,12 @@ impl IntegerKey {
             env::var(get_env_name(key))
                 .unwrap_or_default()
                 .parse::<i64>()
-                .unwrap_or_default()
+                .unwrap_or(self.1.to_owned())
         }
     }
 }
 
-struct BooleanKey(String);
+struct BooleanKey(String, bool);
 
 impl BooleanKey {
     fn get_value(&self) -> bool {
@@ -85,7 +85,7 @@ impl BooleanKey {
             env::var(get_env_name(key))
                 .unwrap_or_default()
                 .parse::<bool>()
-                .unwrap_or_default()
+                .unwrap_or(self.1.to_owned())
         }
     }
 }
