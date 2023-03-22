@@ -1,12 +1,12 @@
+use std::env;
 use std::error::Error;
 use std::fs::read_to_string;
 use std::path::Path;
 use std::string::ToString;
 use toml::Table;
 
-pub const DEFAULT_STRING: &str = "";
-pub const DEFAULT_INTEGER: i64 = 0;
-pub const DEFAULT_BOOLEAN: bool = false;
+pub const CONFIG_FILENAME: &str = "config.toml";
+pub const ENV_PREFIX: &str = "SE_";
 
 fn main() -> Result<(), Box<dyn Error>> {
     let config = get_config()?;
@@ -40,6 +40,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+fn get_env_name(key: &str) -> String {
+    let mut env_name: String = ENV_PREFIX.to_owned();
+    let key_uppercase: String = key.replace("-", "_").to_uppercase();
+    env_name.push_str(&key_uppercase);
+    env_name
+}
+
 struct StringKey(String);
 
 impl StringKey {
@@ -49,7 +56,7 @@ impl StringKey {
         if config.contains_key(key) {
             config[key].as_str().unwrap().to_string()
         } else {
-            DEFAULT_STRING.to_string()
+            env::var(get_env_name(key)).unwrap_or_default()
         }
     }
 }
@@ -63,7 +70,10 @@ impl IntegerKey {
         if config.contains_key(key) {
             config[key].as_integer().unwrap()
         } else {
-            DEFAULT_INTEGER
+            env::var(get_env_name(key))
+                .unwrap_or_default()
+                .parse::<i64>()
+                .unwrap_or_default()
         }
     }
 }
@@ -77,12 +87,15 @@ impl BooleanKey {
         if config.contains_key(key) {
             config[key].as_bool().unwrap()
         } else {
-            DEFAULT_BOOLEAN
+            env::var(get_env_name(key))
+                .unwrap_or_default()
+                .parse::<bool>()
+                .unwrap_or_default()
         }
     }
 }
 
 fn get_config() -> Result<Table, Box<dyn Error>> {
-    let config_path = Path::new("config.toml");
+    let config_path = Path::new(CONFIG_FILENAME);
     Ok(read_to_string(config_path)?.parse()?)
 }
