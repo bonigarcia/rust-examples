@@ -1,21 +1,16 @@
-use std::env;
+use directories::BaseDirs;
 use std::error::Error;
 use std::fs::read_to_string;
-use std::path::Path;
+use std::path::{Path, PathBuf, MAIN_SEPARATOR};
 use std::string::ToString;
+use std::{env, fs};
 use toml::Table;
 
-pub const CONFIG_FILENAME: &str = "config.toml";
+pub const CONFIG_FILE: &str = "selenium-manager-config.toml";
 pub const ENV_PREFIX: &str = "SE_";
+const CACHE_FOLDER: &str = ".cache/selenium";
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let config = get_config()?;
-    println!("{:?}", config);
-    let browser = config["browser"].as_str().unwrap();
-    println!("browser: {}", browser);
-
-    // -----
-
     let browser = StringKey("browser".to_string());
     println!("browser: {}", browser.get_value());
 
@@ -51,7 +46,7 @@ struct StringKey(String);
 
 impl StringKey {
     fn get_value(&self) -> String {
-        let config = get_config().unwrap();
+        let config = get_config().unwrap_or_default();
         let key = self.0.as_str();
         if config.contains_key(key) {
             config[key].as_str().unwrap().to_string()
@@ -65,7 +60,7 @@ struct IntegerKey(String);
 
 impl IntegerKey {
     fn get_value(&self) -> i64 {
-        let config = get_config().unwrap();
+        let config = get_config().unwrap_or_default();
         let key = self.0.as_str();
         if config.contains_key(key) {
             config[key].as_integer().unwrap()
@@ -82,7 +77,7 @@ struct BooleanKey(String);
 
 impl BooleanKey {
     fn get_value(&self) -> bool {
-        let config = get_config().unwrap();
+        let config = get_config().unwrap_or_default();
         let key = self.0.as_str();
         if config.contains_key(key) {
             config[key].as_bool().unwrap()
@@ -96,6 +91,30 @@ impl BooleanKey {
 }
 
 fn get_config() -> Result<Table, Box<dyn Error>> {
-    let config_path = Path::new(CONFIG_FILENAME);
+    let config_path = get_config_path();
     Ok(read_to_string(config_path)?.parse()?)
+}
+
+fn get_config_path() -> PathBuf {
+    get_cache_folder().join(CONFIG_FILE)
+}
+
+pub fn get_cache_folder() -> PathBuf {
+    let cache_path = compose_cache_folder();
+    create_path_if_not_exists(&cache_path);
+    cache_path
+}
+
+pub fn create_path_if_not_exists(path: &Path) {
+    if !path.exists() {
+        fs::create_dir_all(path).unwrap();
+    }
+}
+
+pub fn compose_cache_folder() -> PathBuf {
+    if let Some(base_dirs) = BaseDirs::new() {
+        return Path::new(base_dirs.home_dir())
+            .join(String::from(CACHE_FOLDER).replace('/', &MAIN_SEPARATOR.to_string()));
+    }
+    PathBuf::new()
 }

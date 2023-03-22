@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 toml = "0.7.3"
+directories = "5.0.0"

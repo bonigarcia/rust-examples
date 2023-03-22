@@ -1802,6 +1802,7 @@ dependencies = [
 name = "toml"
 version = "0.1.0"
 dependencies = [
+ "directories 5.0.0",
  "toml 0.7.3",
 ]
 
