@@ -11,10 +11,10 @@ pub const ENV_PREFIX: &str = "SE_";
 const CACHE_FOLDER: &str = ".cache/selenium";
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let browser = StringKey("browser", "");
+    let browser = StringKey(vec!["browser"], "");
     println!("browser: {}", browser.get_value());
 
-    let driver = StringKey("driver", "");
+    let driver = StringKey(vec!["driver"], "");
     println!("driver: {}", driver.get_value());
 
     let driver_ttl = IntegerKey("driver-ttl", 0);
@@ -23,7 +23,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let debug = BooleanKey("debug", true);
     println!("debug: {}", debug.get_value());
 
-    let no_string = StringKey("no-string", "Default");
+    let no_string = StringKey(vec!["no-string", "other-string"], "Default");
     println!("no-string: {}", no_string.get_value());
 
     let no_integer = IntegerKey("no-integer", 10);
@@ -42,17 +42,24 @@ fn get_env_name(key: &str) -> String {
     env_name
 }
 
-struct StringKey<'a>(&'a str, &'a str);
+struct StringKey<'a>(Vec<&'a str>, &'a str);
 
 impl StringKey<'_> {
     fn get_value(&self) -> String {
         let config = get_config().unwrap_or_default();
-        let key = self.0;
-        if config.contains_key(key) {
-            config[key].as_str().unwrap().to_string()
-        } else {
-            env::var(get_env_name(key)).unwrap_or(self.1.to_owned())
+        let keys = self.0.to_owned();
+        let mut result;
+        for key in keys {
+            if config.contains_key(key) {
+                result = config[key].as_str().unwrap().to_string()
+            } else {
+                result = env::var(get_env_name(key)).unwrap_or_default()
+            }
+            if !result.is_empty() {
+                return result;
+            }
         }
+        self.1.to_owned()
     }
 }
 
