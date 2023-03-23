@@ -11,25 +11,25 @@ pub const ENV_PREFIX: &str = "SE_";
 const CACHE_FOLDER: &str = ".cache/selenium";
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let browser = StringKey("browser".to_string(), "".to_string());
+    let browser = StringKey("browser", "");
     println!("browser: {}", browser.get_value());
 
-    let driver = StringKey("driver".to_string(), "".to_string());
+    let driver = StringKey("driver", "");
     println!("driver: {}", driver.get_value());
 
-    let driver_ttl = IntegerKey("driver-ttl".to_string(), 0);
+    let driver_ttl = IntegerKey("driver-ttl", 0);
     println!("driver-ttl: {}", driver_ttl.get_value());
 
-    let debug = BooleanKey("debug".to_string(), true);
+    let debug = BooleanKey("debug", true);
     println!("debug: {}", debug.get_value());
 
-    let no_string = StringKey("no-string".to_string(), "Default".to_string());
+    let no_string = StringKey("no-string", "Default");
     println!("no-string: {}", no_string.get_value());
 
-    let no_integer = IntegerKey("no-integer".to_string(), 10);
+    let no_integer = IntegerKey("no-integer", 10);
     println!("no-integer: {}", no_integer.get_value());
 
-    let no_boolean = BooleanKey("no-boolean".to_string(), false);
+    let no_boolean = BooleanKey("no-boolean", false);
     println!("no-boolean: {}", no_boolean.get_value());
 
     Ok(())
@@ -42,12 +42,12 @@ fn get_env_name(key: &str) -> String {
     env_name
 }
 
-struct StringKey(String, String);
+struct StringKey<'a>(&'a str, &'a str);
 
-impl StringKey {
+impl StringKey<'_> {
     fn get_value(&self) -> String {
         let config = get_config().unwrap_or_default();
-        let key = self.0.as_str();
+        let key = self.0;
         if config.contains_key(key) {
             config[key].as_str().unwrap().to_string()
         } else {
@@ -56,12 +56,12 @@ impl StringKey {
     }
 }
 
-struct IntegerKey(String, i64);
+struct IntegerKey<'a>(&'a str, i64);
 
-impl IntegerKey {
+impl IntegerKey<'_> {
     fn get_value(&self) -> i64 {
         let config = get_config().unwrap_or_default();
-        let key = self.0.as_str();
+        let key = self.0;
         if config.contains_key(key) {
             config[key].as_integer().unwrap()
         } else {
@@ -73,12 +73,12 @@ impl IntegerKey {
     }
 }
 
-struct BooleanKey(String, bool);
+struct BooleanKey<'a>(&'a str, bool);
 
-impl BooleanKey {
+impl BooleanKey<'_> {
     fn get_value(&self) -> bool {
         let config = get_config().unwrap_or_default();
-        let key = self.0.as_str();
+        let key = self.0;
         if config.contains_key(key) {
             config[key].as_bool().unwrap()
         } else {
