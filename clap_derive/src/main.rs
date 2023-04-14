@@ -22,15 +22,14 @@ struct Cli {
 fn main() {
     let cli = Cli::parse();
 
-    let mut filter = match cli.debug {
-        true => Debug,
-        false => Info,
-    };
-    if cli.trace {
-        filter = Trace
-    }
-
     if env::var(DEFAULT_FILTER_ENV).unwrap_or_default().is_empty() {
+        let mut filter = match cli.debug {
+            true => Debug,
+            false => Info,
+        };
+        if cli.trace {
+            filter = Trace
+        }
         env_logger::Builder::new()
             .filter_level(filter)
             .format(|buf, record| {
