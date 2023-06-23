@@ -17,7 +17,7 @@ serde = { version = "1.0.164", features = ["derive"] }
 serde_json = "1.0.97"
 flate2 = "1.0.26"
 tar = "0.4.38"
-infer = "0.13.0"
+infer = "0.14.0"
 
 [dev-dependencies]
 assert_cmd = "2.0.11"
