@@ -8,7 +8,7 @@ clap = { version = "4.1.14", features = ["derive"] }
 log = "0.4.19"
 env_logger = "0.10.0"
 regex = "1.9.3"
-tokio = { version = "1.29.1", features = ["full"] }
+tokio = { version = "1.30.0", features = ["full"] }
 tempfile = "3.7.1"
 reqwest = "0.11.18"
 zip = "0.6.6"
