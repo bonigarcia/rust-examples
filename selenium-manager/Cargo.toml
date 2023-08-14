@@ -21,4 +21,4 @@ infer = "0.15.0"
 
 [dev-dependencies]
 assert_cmd = "2.0.12"
-rstest = "0.18.1"
+rstest = "0.18.2"
