@@ -28,4 +28,5 @@ members = [
     "toml",
     "uncompress",
     "bzip2",
+    "bzip",
 ]

@@ -1,0 +1,10 @@
+[package]
+name = "bzip"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bzip2-rs = "0.1.2"
+bzip2 = "0.4.4"
