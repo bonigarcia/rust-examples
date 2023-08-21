@@ -27,4 +27,5 @@ members = [
     "run_shell",
     "toml",
     "uncompress",
+    "bzip2",
 ]
