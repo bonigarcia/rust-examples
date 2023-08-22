@@ -550,7 +550,7 @@ checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 name = "download"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.18",
+ "reqwest 0.11.19",
  "tempfile",
  "tokio",
  "zip",
@@ -1559,15 +1559,15 @@ checksum = "4bf2521270932c3c7bed1a59151222bd7643c79310f2916f01925e1e16255698"
 name = "reqwest"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.18",
+ "reqwest 0.11.19",
  "tokio",
 ]
 
 [[package]]
 name = "reqwest"
-version = "0.11.18"
+version = "0.11.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cde824a14b7c14f85caff81225f411faacc04a2013f41670f41443742b1c1c55"
+checksum = "20b9b67e2ca7dd9e9f9285b759de30ff538aab981abaaf7bc9bd90b84a0126c3"
 dependencies = [
  "base64",
  "bytes",
@@ -1604,7 +1604,7 @@ dependencies = [
 name = "reqwest-json"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.18",
+ "reqwest 0.11.19",
  "tokio",
 ]
 
@@ -1740,7 +1740,7 @@ dependencies = [
  "infer",
  "log",
  "regex",
- "reqwest 0.11.18",
+ "reqwest 0.11.19",
  "rstest",
  "serde",
  "serde_json",
@@ -2564,11 +2564,12 @@ dependencies = [
 
 [[package]]
 name = "winreg"
-version = "0.10.1"
+version = "0.50.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
+checksum = "524e57b2c537c0f9b1e69f1965311ec12182b4122e45035b1508cd24d2adadb1"
 dependencies = [
- "winapi",
+ "cfg-if",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
