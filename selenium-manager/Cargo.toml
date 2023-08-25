@@ -4,7 +4,7 @@ version = "1.0.0-M1"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.1.14", features = ["derive"] }
+clap = { version = "4.4.0", features = ["derive"] }
 log = "0.4.20"
 env_logger = "0.10.0"
 regex = "1.9.3"
