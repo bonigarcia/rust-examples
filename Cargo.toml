@@ -29,4 +29,6 @@ members = [
     "uncompress",
     "bzip2",
     "bzip",
+    "portable_executable",
+    "debpkg",
 ]
