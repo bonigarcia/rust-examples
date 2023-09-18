@@ -31,4 +31,5 @@ members = [
     "bzip",
     "portable_executable",
     "debpkg",
+    "xar",
 ]
