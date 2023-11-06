@@ -3264,6 +3264,8 @@ name = "xar"
 version = "0.1.0"
 dependencies = [
  "apple-xar",
+ "flate2",
+ "tar",
 ]
 
 [[package]]

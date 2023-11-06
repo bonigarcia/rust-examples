@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 apple-xar = "0.13.0"
+flate2 = "1.0.28"
+tar = "0.4.40"
