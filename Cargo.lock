@@ -123,6 +123,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "apple-flat-package"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fedaa1bb30b642d1b64efea0155ec4862f5bba55e4391ff541e6f565e2b323e"
+dependencies = [
+ "apple-xar",
+ "cpio-archive",
+ "flate2",
+ "scroll",
+ "serde",
+ "serde-xml-rs",
+ "thiserror",
+]
+
+[[package]]
 name = "apple-xar"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -548,6 +563,18 @@ name = "core-foundation-sys"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
+
+[[package]]
+name = "cpio-archive"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2c3922566977c3aa325a48c5d62537205de297aa6e2390f2edb47bf39f84d640"
+dependencies = [
+ "chrono",
+ "is_executable",
+ "simple-file-manifest",
+ "thiserror",
+]
 
 [[package]]
 name = "cpufeatures"
@@ -2448,6 +2475,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e1788eed21689f9cf370582dfc467ef36ed9c707f073528ddafa8d83e3b8500"
 
 [[package]]
+name = "simple-file-manifest"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5dd19be0257552dd56d1bb6946f89f193c6e5b9f13cc9327c4bc84a357507c74"
+
+[[package]]
 name = "slab"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3264,9 +3297,8 @@ dependencies = [
 name = "xar"
 version = "0.1.0"
 dependencies = [
+ "apple-flat-package",
  "apple-xar",
- "flate2",
- "tar",
 ]
 
 [[package]]

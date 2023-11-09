@@ -1,21 +1,15 @@
-use apple_xar::reader::XarReader;
+use apple_flat_package::reader::PkgReader;
 use std::error::Error;
 use std::fs::File;
-use tar::Archive;
-use flate2::read::GzDecoder;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let source = r#"C:\Users\boni\Downloads\MicrosoftEdge-119.0.2151.46.pkg"#;
-    let target = r#"C:\Users\boni\Downloads\extract"#;
-
-    let mut reader = XarReader::new(File::open(source)?)?;
-    reader.unpack(target)?;
-
-    // let payload = File::open(r#"C:\Users\boni\Downloads\extract\MicrosoftEdge-119.0.2151.46.pkg\Payload"#)?;
-    // let tar = GzDecoder::new(&payload);
-    //
-    // let mut archive = Archive::new(tar);
-    // archive.unpack(target)?;
+    // File obtained from
+    // https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a989b093-c982-4d31-95d1-2c439f49b7e7/MicrosoftEdge-116.0.1938.76.pkg
+    let source = r#"C:\Users\boni\Downloads\MicrosoftEdge-116.0.1938.76.pkg"#;
+    // let target = r#"C:\Users\boni\Downloads\extract"#;
+    let mut reader = PkgReader::new(File::open(source)?)?;
+    let packages = reader.component_packages()?;
+    println!("Number of components: {}", packages.len());
 
     Ok(())
 }
