@@ -125,8 +125,7 @@ dependencies = [
 [[package]]
 name = "apple-flat-package"
 version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9fedaa1bb30b642d1b64efea0155ec4862f5bba55e4391ff541e6f565e2b323e"
+source = "git+https://github.com/indygreg/apple-platform-rs/#2bec4b0d91c11f9b69632861292226d740ed682f"
 dependencies = [
  "apple-xar",
  "cpio-archive",
@@ -140,8 +139,7 @@ dependencies = [
 [[package]]
 name = "apple-xar"
 version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5360ef28927ec707acd7a40223bce753d260b6c760dabc6563661baea573d9aa"
+source = "git+https://github.com/indygreg/apple-platform-rs/#2bec4b0d91c11f9b69632861292226d740ed682f"
 dependencies = [
  "base64",
  "bcder",
@@ -567,8 +565,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 [[package]]
 name = "cpio-archive"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c3922566977c3aa325a48c5d62537205de297aa6e2390f2edb47bf39f84d640"
+source = "git+https://github.com/indygreg/apple-platform-rs/#2bec4b0d91c11f9b69632861292226d740ed682f"
 dependencies = [
  "chrono",
  "is_executable",

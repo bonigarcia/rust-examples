@@ -6,5 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-apple-xar = "0.15.0"
-apple-flat-package = "0.15.0"
+#apple-xar = "0.15.0"
+#apple-flat-package = "0.15.0"
+apple-xar = { git = "https://github.com/indygreg/apple-platform-rs/" }
+apple-flat-package = { git = "https://github.com/indygreg/apple-platform-rs/" }
