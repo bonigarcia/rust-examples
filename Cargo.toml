@@ -11,6 +11,7 @@ members = [
     "confy",
     "hyper",
     "reqwest",
+    "reqwest-post",
     "reqwest-json",
     "shell",
     "download",
