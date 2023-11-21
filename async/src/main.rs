@@ -47,7 +47,10 @@ async fn call_plausible() -> Result<String, Box<dyn Error>> {
         .header(CONTENT_TYPE, APP_JSON)
         .body(serde_json::to_string_pretty(&data)?);
     println!("Plausible: 2");
-    request.send().await?;
+    if let Err(err) = request.send().await {
+        println!("Error sending stats: {}", err);
+    }
+
     println!("Plausible: 3");
 
     Ok("Plausible OK".into())
