@@ -125,7 +125,7 @@ dependencies = [
 [[package]]
 name = "apple-flat-package"
 version = "0.17.0"
-source = "git+https://github.com/indygreg/apple-platform-rs/#39a75a3f555cf2f427c4d3c2d76e0c3105ca296c"
+source = "git+https://github.com/indygreg/apple-platform-rs/#d6d0d59a631c335cc61b3280ab89e2f4c7b963bd"
 dependencies = [
  "apple-xar",
  "cpio-archive",
@@ -139,7 +139,7 @@ dependencies = [
 [[package]]
 name = "apple-xar"
 version = "0.17.0"
-source = "git+https://github.com/indygreg/apple-platform-rs/#39a75a3f555cf2f427c4d3c2d76e0c3105ca296c"
+source = "git+https://github.com/indygreg/apple-platform-rs/#d6d0d59a631c335cc61b3280ab89e2f4c7b963bd"
 dependencies = [
  "base64",
  "bcder",
@@ -565,7 +565,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 [[package]]
 name = "cpio-archive"
 version = "0.8.0"
-source = "git+https://github.com/indygreg/apple-platform-rs/#39a75a3f555cf2f427c4d3c2d76e0c3105ca296c"
+source = "git+https://github.com/indygreg/apple-platform-rs/#d6d0d59a631c335cc61b3280ab89e2f4c7b963bd"
 dependencies = [
  "chrono",
  "is_executable",
