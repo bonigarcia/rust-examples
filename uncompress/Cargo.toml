@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 #sevenz-rust = { path = "../../sevenz-rust" }
-sevenz-rust = "0.5.3"
+sevenz-rust = "0.5.4"
