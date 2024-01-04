@@ -14,7 +14,7 @@ reqwest = "0.11.23"
 zip = "0.6.6"
 directories = "5.0.1"
 serde = { version = "1.0.194", features = ["derive"] }
-serde_json = "1.0.109"
+serde_json = "1.0.110"
 flate2 = "1.0.28"
 tar = "0.4.40"
 infer = "0.15.0"
