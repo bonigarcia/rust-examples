@@ -527,21 +527,21 @@ version = "0.1.0"
 name = "confy"
 version = "0.1.0"
 dependencies = [
- "confy 0.5.1",
+ "confy 0.6.0",
  "serde",
  "serde_derive",
 ]
 
 [[package]]
 name = "confy"
-version = "0.5.1"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e37668cb35145dcfaa1931a5f37fde375eeae8068b4c0d2f289da28a270b2d2c"
+checksum = "15d296c475c6ed4093824c28e222420831d27577aaaf0a1163a3b7fc35b248a5"
 dependencies = [
- "directories 4.0.1",
+ "directories",
  "serde",
  "thiserror",
- "toml 0.5.9",
+ "toml 0.8.8",
 ]
 
 [[package]]
@@ -770,38 +770,18 @@ dependencies = [
 
 [[package]]
 name = "directories"
-version = "4.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f51c5d4ddabd36886dd3e1438cb358cdcb0d7c499cb99cb4ac2e38e18b5cb210"
-dependencies = [
- "dirs-sys 0.3.7",
-]
-
-[[package]]
-name = "directories"
 version = "5.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a49173b84e034382284f27f1af4dcbbd231ffa358c0fe316541a7337f376a35"
 dependencies = [
- "dirs-sys 0.4.1",
+ "dirs-sys",
 ]
 
 [[package]]
 name = "dirs"
 version = "0.1.0"
 dependencies = [
- "directories 5.0.1",
-]
-
-[[package]]
-name = "dirs-sys"
-version = "0.3.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b1d1d91c932ef41c0f2663aa8b0ca0342d444d842c06914aa0a7e352d0bada6"
-dependencies = [
- "libc",
- "redox_users",
- "winapi",
+ "directories",
 ]
 
 [[package]]
@@ -2376,7 +2356,7 @@ version = "1.0.0-M1"
 dependencies = [
  "assert_cmd",
  "clap",
- "directories 5.0.1",
+ "directories",
  "env_logger",
  "flate2",
  "infer 0.15.0",
@@ -2845,17 +2825,8 @@ dependencies = [
 name = "toml"
 version = "0.1.0"
 dependencies = [
- "directories 5.0.1",
+ "directories",
  "toml 0.8.8",
-]
-
-[[package]]
-name = "toml"
-version = "0.5.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d82e1a7758622a465f8cee077614c73484dac5b836c02ff6a40d5d1010324d7"
-dependencies = [
- "serde",
 ]
 
 [[package]]
