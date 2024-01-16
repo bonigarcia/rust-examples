@@ -125,7 +125,7 @@ dependencies = [
 [[package]]
 name = "apple-flat-package"
 version = "0.17.0"
-source = "git+https://github.com/indygreg/apple-platform-rs/#988ee3827eb1930e65def18985501ad940ea759b"
+source = "git+https://github.com/indygreg/apple-platform-rs/#4631cee99760e549282f906f14c79079ac2bd573"
 dependencies = [
  "apple-xar",
  "cpio-archive",
@@ -139,7 +139,7 @@ dependencies = [
 [[package]]
 name = "apple-xar"
 version = "0.17.0"
-source = "git+https://github.com/indygreg/apple-platform-rs/#988ee3827eb1930e65def18985501ad940ea759b"
+source = "git+https://github.com/indygreg/apple-platform-rs/#4631cee99760e549282f906f14c79079ac2bd573"
 dependencies = [
  "base64",
  "bcder",
@@ -225,9 +225,9 @@ dependencies = [
 
 [[package]]
 name = "base64"
-version = "0.21.5"
+version = "0.21.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35636a1494ede3b646cc98f74f8e62c773a38a659ebc777a2cf26b9b74171df9"
+checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
 
 [[package]]
 name = "base64ct"
@@ -241,9 +241,9 @@ version = "0.1.0"
 
 [[package]]
 name = "bcder"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf16bec990f8ea25cab661199904ef452fcf11f565c404ce6cffbdf3f8cbbc47"
+checksum = "c627747a6774aab38beb35990d88309481378558875a41da1a4b2e373c906ef0"
 dependencies = [
  "bytes",
  "smallvec",
@@ -575,7 +575,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 [[package]]
 name = "cpio-archive"
 version = "0.8.0"
-source = "git+https://github.com/indygreg/apple-platform-rs/#988ee3827eb1930e65def18985501ad940ea759b"
+source = "git+https://github.com/indygreg/apple-platform-rs/#4631cee99760e549282f906f14c79079ac2bd573"
 dependencies = [
  "chrono",
  "is_executable",
@@ -2299,18 +2299,18 @@ checksum = "a3cf7c11c38cb994f3d40e8a8cde3bbd1f72a435e4c49e85d6553d8312306152"
 
 [[package]]
 name = "scroll"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04c565b551bafbef4157586fa379538366e4385d42082f255bfd96e4fe8519da"
+checksum = "6ab8598aa408498679922eff7fa985c25d58a90771bd6be794434c5277eab1a6"
 dependencies = [
  "scroll_derive",
 ]
 
 [[package]]
 name = "scroll_derive"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1db149f81d46d2deba7cd3c50772474707729550221e69588478ebf9ada425ae"
+checksum = "7f81c2fde025af7e69b1d1420531c8a8811ca898919db177141a85313b1cb932"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2692,18 +2692,18 @@ checksum = "507e9898683b6c43a9aa55b64259b721b52ba226e0f3779137e50ad114a4c90b"
 
 [[package]]
 name = "thiserror"
-version = "1.0.51"
+version = "1.0.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f11c217e1416d6f036b870f14e0413d480dbf28edbee1f877abaf0206af43bb7"
+checksum = "d54378c645627613241d077a3a79db965db602882668f9136ac42af9ecb730ad"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.51"
+version = "1.0.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "01742297787513b79cf8e29d1056ede1313e2420b7b3b15d0a768b4921f549df"
+checksum = "fa0faa943b50f3db30a20aa7e265dbc66076993efed8463e8de414e5d06d3471"
 dependencies = [
  "proc-macro2",
  "quote",
