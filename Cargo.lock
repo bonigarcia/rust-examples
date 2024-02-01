@@ -151,7 +151,7 @@ dependencies = [
  "log",
  "md-5 0.10.6",
  "rand",
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "scroll",
  "serde",
  "serde-xml-rs",
@@ -196,7 +196,7 @@ dependencies = [
 name = "async"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "serde",
  "serde_json",
  "tokio",
@@ -647,7 +647,7 @@ dependencies = [
  "chrono",
  "hex",
  "pem",
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "ring 0.17.5",
  "signature",
  "x509-certificate",
@@ -806,7 +806,7 @@ checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 name = "download"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "tempfile",
  "tokio",
  "zip",
@@ -2069,15 +2069,15 @@ checksum = "4bf2521270932c3c7bed1a59151222bd7643c79310f2916f01925e1e16255698"
 name = "reqwest"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "tokio",
 ]
 
 [[package]]
 name = "reqwest"
-version = "0.11.23"
+version = "0.11.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37b1ae8d9ac08420c66222fb9096fc5de435c3c48542bc5336c51892cffafb41"
+checksum = "c6920094eb85afde5e4a138be3f2de8bbdf28000f0029e72c45025a56b042251"
 dependencies = [
  "base64",
  "bytes",
@@ -2103,6 +2103,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
+ "sync_wrapper",
  "system-configuration",
  "tokio",
  "tokio-native-tls",
@@ -2120,7 +2121,7 @@ dependencies = [
 name = "reqwest-json"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "tokio",
 ]
 
@@ -2128,7 +2129,7 @@ dependencies = [
 name = "reqwest-post"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "serde",
  "serde_json",
  "tokio",
@@ -2362,7 +2363,7 @@ dependencies = [
  "infer 0.15.0",
  "log",
  "regex",
- "reqwest 0.11.23",
+ "reqwest 0.11.24",
  "rstest",
  "serde",
  "serde_json",
@@ -2629,6 +2630,12 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "sync_wrapper"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2047c6ded9c721764247e62cd3b03c09ffc529b2ba5b10ec482ae507a4a70160"
 
 [[package]]
 name = "system-configuration"
