@@ -5,8 +5,10 @@ use std::path::Path;
 use xz2::bufread::XzDecoder;
 
 fn main() -> Result<(), Error> {
-    let source = r#"C:\Users\boni\Downloads\microsoft-edge-stable-122.0.2365.80-1.x86_64.rpm"#;
-    let target = r#"C:\Users\boni\Downloads\extract"#;
+    // let source = r#"C:\Users\boni\Downloads\microsoft-edge-stable-122.0.2365.80-1.x86_64.rpm"#;
+    // let target = r#"C:\Users\boni\Downloads\extract"#;
+    let source = "/home/boni/Downloads/microsoft-edge-stable-122.0.2365.92-1.x86_64.rpm";
+    let target = "/home/boni/Downloads/extract";
 
     uncompress_xz(source, target)?;
 
@@ -31,12 +33,13 @@ pub fn uncompress_xz(source: &str, target: &str) -> Result<(), Error> {
     for entry in cpio_reader::iter_files(&buffer) {
         let name = entry.name();
         let file = entry.file();
+
         let target_path_buf = target_path.join(name);
 
         if file.len() != 0 {
             let target_path = target_path_buf.as_path();
             fs::create_dir_all(target_path.parent().unwrap())?;
-            fs::write(target_path_buf, file)?;
+            fs::write(&target_path_buf, file)?;
 
             // Set permissions
             #[cfg(unix)]
@@ -44,7 +47,7 @@ pub fn uncompress_xz(source: &str, target: &str) -> Result<(), Error> {
                 use std::os::unix::fs::PermissionsExt;
 
                 let mode = entry.mode();
-                fs::set_permissions(&target_path, fs::Permissions::from_mode(mode))?;
+                fs::set_permissions(&target_path, fs::Permissions::from_mode(mode.bits()))?;
             }
         }
     }
