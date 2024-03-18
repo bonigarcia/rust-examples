@@ -1,0 +1,21 @@
+workspace.resolver = "2"
+
+[package]
+name = "rpm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = { version = "1.0.81", features = ["backtrace"] }
+rpm = "0.14.0"
+xz2 = "0.1.7"
+cpio_reader = "0.1.1"
+
+#cpio-archive = "0.9.0"
+#flate2 = "1.0.28"
+#tar = "0.4.40"
+#sevenz-rust = "0.5.4"
+
+

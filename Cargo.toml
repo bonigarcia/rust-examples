@@ -34,5 +34,6 @@ members = [
     "debpkg",
     "xar",
     "anyhow",
-    "async"
+    "async",
+    "rpm"
 ]
