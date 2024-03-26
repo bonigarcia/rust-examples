@@ -8,8 +8,11 @@ use std::path::Path;
 fn main() -> Result<(), Box<dyn Error>> {
     // Source file obtained from
     // https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/61b13da3-c921-482a-9166-743689310b71/MicrosoftEdge-122.0.2365.92.pkg
-    let source = r#"C:\Users\boni\Downloads\MicrosoftEdge-122.0.2365.92.pkg"#;
-    let target = r#"C:\Users\boni\Downloads\extract"#;
+    // let source = r#"C:\Users\boni\Downloads\MicrosoftEdge-122.0.2365.92.pkg"#;
+    // let target = r#"C:\Users\boni\Downloads\extract"#;
+    let source = "/home/boni/Downloads/MicrosoftEdge-122.0.2365.92.pkg";
+    let target = "/home/boni/Downloads/extract";
+
     let target_path = Path::new(target);
 
     let mut reader = PkgReader::new(File::open(source)?)?;
@@ -39,7 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                         use std::os::unix::fs::PermissionsExt;
 
                         let mode = entry.mode();
-                        fs::set_permissions(target_path, fs::Permissions::from_mode(mode.bits()))?;
+                        fs::set_permissions(target_path, fs::Permissions::from_mode(mode))?;
                     }
                 }
             }
