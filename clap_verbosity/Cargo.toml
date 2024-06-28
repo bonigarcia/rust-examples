@@ -9,5 +9,5 @@ edition = "2021"
 clap = { version = "4.5.7", features = ["derive"] }
 clap-verbosity-flag = "2.2.0"
 exitcode = "1.1.2"
-log = "0.4.21"
+log = "0.4.22"
 env_logger = "0.10.2"
