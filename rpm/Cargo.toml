@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1.0.86", features = ["backtrace"] }
-rpm = "0.15.0"
+rpm = "0.15.1"
 xz2 = "0.1.7"
 cpio_reader = "0.1.1"
 
