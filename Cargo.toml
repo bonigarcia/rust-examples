@@ -35,5 +35,6 @@ members = [
     "xar",
     "anyhow",
     "async",
-    "rpm"
+    "rpm",
+    "scap"
 ]

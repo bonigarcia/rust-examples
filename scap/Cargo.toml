@@ -1,0 +1,7 @@
+[package]
+name = "scap"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+scap = "0.0.7"
