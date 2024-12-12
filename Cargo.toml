@@ -36,5 +36,6 @@ members = [
     "anyhow",
     "async",
     "rpm",
-    "scap"
+    "scap",
+    "fs2"
 ]
