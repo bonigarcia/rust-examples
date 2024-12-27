@@ -10,7 +10,7 @@ env_logger = "0.11.6"
 regex = "1.11.1"
 tokio = { version = "1.42.0", features = ["full"] }
 tempfile = "3.14.0"
-reqwest = "0.12.9"
+reqwest = "0.12.10"
 zip = "2.2.2"
 directories = "5.0.1"
 serde = { version = "1.0.216", features = ["derive"] }
