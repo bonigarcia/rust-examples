@@ -191,7 +191,7 @@ dependencies = [
  "log",
  "md-5 0.10.6",
  "rand",
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "scroll",
  "serde",
  "serde-xml-rs",
@@ -258,7 +258,7 @@ dependencies = [
 name = "async"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "serde",
  "serde_json",
  "tokio",
@@ -1007,7 +1007,7 @@ dependencies = [
  "chrono",
  "hex",
  "pem",
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "ring",
  "signature",
  "x509-certificate",
@@ -1320,7 +1320,7 @@ checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 name = "download"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "tempfile",
  "tokio",
  "zip",
@@ -3465,15 +3465,15 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 name = "reqwest"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "tokio",
 ]
 
 [[package]]
 name = "reqwest"
-version = "0.12.9"
+version = "0.12.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a77c62af46e79de0a562e1a9849205ffcb7fc1238876e9bd743357570e04046f"
+checksum = "3d3536321cfc54baa8cf3e273d5e1f63f889067829c4b410fcdbac8ca7b80994"
 dependencies = [
  "base64 0.22.1",
  "bytes",
@@ -3509,6 +3509,7 @@ dependencies = [
  "tokio",
  "tokio-native-tls",
  "tokio-rustls",
+ "tower",
  "tower-service",
  "url",
  "wasm-bindgen",
@@ -3522,7 +3523,7 @@ dependencies = [
 name = "reqwest-json"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "tokio",
 ]
 
@@ -3530,7 +3531,7 @@ dependencies = [
 name = "reqwest-post"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "serde",
  "serde_json",
  "tokio",
@@ -3886,7 +3887,7 @@ dependencies = [
  "infer 0.16.0",
  "log",
  "regex",
- "reqwest 0.12.9",
+ "reqwest 0.12.10",
  "rstest",
  "serde",
  "serde_json",
@@ -4509,6 +4510,27 @@ dependencies = [
  "toml_datetime",
  "winnow 0.6.20",
 ]
+
+[[package]]
+name = "tower"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d039ad9159c98b70ecfd540b2573b97f7f52c3e8d9f8ad57a24b916a536975f9"
+dependencies = [
+ "futures-core",
+ "futures-util",
+ "pin-project-lite",
+ "sync_wrapper",
+ "tokio",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
+name = "tower-layer"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "121c2a6cda46980bb0fcd1647ffaf6cd3fc79a013de288782836f6df9c48780e"
 
 [[package]]
 name = "tower-service"
