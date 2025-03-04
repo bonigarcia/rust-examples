@@ -38,5 +38,7 @@ members = [
     "rpm",
     "scap",
     "fs2",
-    "fs_extra"
+    "fs_extra",
+    "capture",
+    "window_titles"
 ]
