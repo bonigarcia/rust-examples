@@ -40,5 +40,6 @@ members = [
     "fs2",
     "fs_extra",
     "capture",
-    "window_titles"
+    "window_titles",
+    "winapi"
 ]
