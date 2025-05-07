@@ -4,21 +4,21 @@ version = "1.0.0-M1"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.5.31", features = ["derive"] }
-log = "0.4.26"
+clap = { version = "4.5.37", features = ["derive"] }
+log = "0.4.27"
 env_logger = "0.11.6"
 regex = "1.11.1"
-tokio = { version = "1.43.0", features = ["full"] }
-tempfile = "3.17.1"
-reqwest = "0.12.12"
-zip = "2.2.3"
+tokio = { version = "1.45.0", features = ["full"] }
+tempfile = "3.19.1"
+reqwest = "0.12.15"
+zip = "2.6.1"
 directories = "6.0.0"
-serde = { version = "1.0.218", features = ["derive"] }
-serde_json = "1.0.139"
-flate2 = "1.1.0"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+flate2 = "1.1.1"
 tar = "0.4.44"
 infer = "0.19.0"
 
 [dev-dependencies]
-assert_cmd = "2.0.16"
+assert_cmd = "2.0.17"
 rstest = "0.25.0"
