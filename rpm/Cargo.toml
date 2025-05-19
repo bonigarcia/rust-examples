@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = { version = "1.0.98", features = ["backtrace"] }
 rpm = "0.16.0"
 xz2 = "0.1.7"
-cpio_reader = "0.1.1"
+cpio_reader = "0.1.2"
 
 #cpio-archive = "0.9.0"
 #flate2 = "1.0.28"
