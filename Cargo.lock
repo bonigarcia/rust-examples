@@ -3999,15 +3999,15 @@ version = "0.1.0"
 dependencies = [
  "anyhow 1.0.99",
  "cpio_reader",
- "rpm 0.16.0",
+ "rpm 0.16.1",
  "xz2",
 ]
 
 [[package]]
 name = "rpm"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1630639f4dbc1c71ad7b704cda2171584c80735c502efae94804d02763fc6f7d"
+checksum = "422ffe5b31ea4c7c76a361dc29b986e11fb6987313453088e1fd95f34ecc1ba6"
 dependencies = [
  "bitflags 2.6.0",
  "chrono",
