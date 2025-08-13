@@ -197,7 +197,7 @@ dependencies = [
  "log",
  "md-5 0.10.6",
  "rand",
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "scroll",
  "serde",
  "serde-xml-rs",
@@ -275,7 +275,7 @@ dependencies = [
 name = "async"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "serde",
  "serde_json",
  "tokio",
@@ -1111,7 +1111,7 @@ dependencies = [
  "chrono",
  "hex",
  "pem",
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "ring",
  "signature",
  "x509-certificate",
@@ -1424,7 +1424,7 @@ checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
 name = "download"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "tempfile",
  "tokio",
  "zip",
@@ -3885,15 +3885,15 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 name = "reqwest"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "tokio",
 ]
 
 [[package]]
 name = "reqwest"
-version = "0.12.22"
+version = "0.12.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbc931937e6ca3a06e3b6c0aa7841849b160a90351d6ab467a8b9b9959767531"
+checksum = "d429f34c8092b2d42c7c93cec323bb4adeb7c67698f70839adec842ec10c7ceb"
 dependencies = [
  "base64 0.22.1",
  "bytes",
@@ -3939,7 +3939,7 @@ dependencies = [
 name = "reqwest-json"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "tokio",
 ]
 
@@ -3947,7 +3947,7 @@ dependencies = [
 name = "reqwest-post"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "serde",
  "serde_json",
  "tokio",
@@ -4330,7 +4330,7 @@ dependencies = [
  "infer 0.19.0",
  "log",
  "regex",
- "reqwest 0.12.22",
+ "reqwest 0.12.23",
  "rstest",
  "serde",
  "serde_json",
