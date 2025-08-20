@@ -9,7 +9,7 @@ log = "0.4.27"
 env_logger = "0.11.6"
 regex = "1.11.1"
 tokio = { version = "1.47.1", features = ["full"] }
-tempfile = "3.20.0"
+tempfile = "3.21.0"
 reqwest = "0.12.23"
 zip = "3.0.0"
 directories = "6.0.0"
