@@ -13,7 +13,7 @@ tempfile = "3.23.0"
 reqwest = "0.12.23"
 zip = "3.0.0"
 directories = "6.0.0"
-serde = { version = "1.0.227", features = ["derive"] }
+serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 flate2 = "1.1.2"
 tar = "0.4.44"
