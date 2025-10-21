@@ -4211,9 +4211,9 @@ checksum = "f3cb5ba0dc43242ce17de99c180e96db90b235b8a9fdc9543c96d2209116bd9f"
 
 [[package]]
 name = "scap"
-version = "0.0.7"
+version = "0.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14ca85dd7aa5f0e11e093c1c32b306666a52903db1bd89aa6442967a03cd8bd2"
+checksum = "55817d631bc81ba5f347ff5e112c87b8cc0dd99fac0e8e363bf451c3edfdb763"
 dependencies = [
  "cocoa",
  "core-graphics-helmer-fork",
@@ -4233,7 +4233,7 @@ dependencies = [
 name = "scap"
 version = "0.1.0"
 dependencies = [
- "scap 0.0.7",
+ "scap 0.0.8",
 ]
 
 [[package]]
