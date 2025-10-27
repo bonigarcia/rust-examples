@@ -14,7 +14,7 @@ jobs:
           cd selenium-manager
           cargo build --release
       - name: "Upload binary"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-manager_windows-x64
           path: ./target/release/selenium-manager.exe
@@ -35,7 +35,7 @@ jobs:
           cd target/release
           tar -cvf ../../selenium-manager.tar selenium-manager
       - name: "Upload binary"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-manager_linux-x64
           path: selenium-manager.tar
@@ -56,7 +56,7 @@ jobs:
           cd target/release
           tar -cvf ../../selenium-manager.tar selenium-manager
       - name: "Upload binary"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-manager_macos-x64
           path: selenium-manager.tar
