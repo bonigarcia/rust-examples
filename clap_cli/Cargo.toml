@@ -10,4 +10,4 @@ clap = "4.5.50"
 exitcode = "1.1.2"
 
 [dev-dependencies]
-assert_cmd = "2.0.17"
+assert_cmd = "2.1.0"
