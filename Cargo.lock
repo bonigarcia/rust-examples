@@ -197,7 +197,7 @@ dependencies = [
  "log",
  "md-5 0.10.6",
  "rand",
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "scroll",
  "serde",
  "serde-xml-rs",
@@ -274,7 +274,7 @@ dependencies = [
 name = "async"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "serde",
  "serde_json",
  "tokio",
@@ -1111,7 +1111,7 @@ dependencies = [
  "chrono",
  "hex",
  "pem",
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "ring",
  "signature",
  "x509-certificate",
@@ -1418,7 +1418,7 @@ dependencies = [
 name = "download"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "tempfile",
  "tokio",
  "zip",
@@ -3915,15 +3915,15 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 name = "reqwest"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "tokio",
 ]
 
 [[package]]
 name = "reqwest"
-version = "0.12.24"
+version = "0.12.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d0946410b9f7b082a427e4ef5c8ff541a88b357bc6c637c40db3a68ac70a36f"
+checksum = "b6eff9328d40131d43bd911d42d79eb6a47312002a4daefc9e37f17e74a7701a"
 dependencies = [
  "base64 0.22.1",
  "bytes",
@@ -3969,7 +3969,7 @@ dependencies = [
 name = "reqwest-json"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "tokio",
 ]
 
@@ -3977,7 +3977,7 @@ dependencies = [
 name = "reqwest-post"
 version = "0.1.0"
 dependencies = [
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "serde",
  "serde_json",
  "tokio",
@@ -4360,7 +4360,7 @@ dependencies = [
  "infer 0.19.0",
  "log",
  "regex",
- "reqwest 0.12.24",
+ "reqwest 0.12.25",
  "rstest",
  "serde",
  "serde_json",
@@ -5099,9 +5099,9 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.6.5"
+version = "0.6.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cc2d9e086a412a451384326f521c8123a99a466b329941a9403696bff9b0da2"
+checksum = "d4e6559d53cc268e5031cd8429d05415bc4cb4aefc4aa5d6cc35fbf5b924a1f8"
 dependencies = [
  "bitflags 2.6.0",
  "bytes",
