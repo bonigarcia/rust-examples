@@ -154,14 +154,14 @@ dependencies = [
 name = "anyhow"
 version = "0.1.0"
 dependencies = [
- "anyhow 1.0.100",
+ "anyhow 1.0.101",
 ]
 
 [[package]]
 name = "anyhow"
-version = "1.0.100"
+version = "1.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
+checksum = "5f0e0fee31ef5ed1ba1316088939cea399010ed7731dba877ed44aeb407a75ea"
 dependencies = [
  "backtrace",
 ]
@@ -295,7 +295,7 @@ version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6678909d8c5d46a42abcf571271e15fdbc0a225e3646cf23762cd415046c78bf"
 dependencies = [
- "anyhow 1.0.100",
+ "anyhow 1.0.101",
  "arrayvec",
  "log",
  "nom",
@@ -3427,7 +3427,7 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08e645ba5c45109106d56610b3ee60eb13a6f2beb8b74f8dc8186cf261788dda"
 dependencies = [
- "anyhow 1.0.100",
+ "anyhow 1.0.101",
  "bitflags 2.6.0",
  "libc",
  "libspa",
@@ -4010,7 +4010,7 @@ dependencies = [
 name = "rpm"
 version = "0.1.0"
 dependencies = [
- "anyhow 1.0.100",
+ "anyhow 1.0.101",
  "cpio_reader",
  "rpm 0.16.1",
  "xz2",
