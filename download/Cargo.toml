@@ -9,4 +9,4 @@ edition = "2021"
 tokio = { version = "1.50.0", features = ["full"] }
 tempfile = "3.27.0"
 reqwest = "0.12.28"
-zip = "8.4.0"
+zip = "8.5.0"
