@@ -2045,9 +2045,9 @@ dependencies = [
 
 [[package]]
 name = "h2"
-version = "0.4.7"
+version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ccae279728d634d083c00f6099cb58f01cc99c145b84b8be2f6c74618d79922e"
+checksum = "171fefbc92fe4a4de27e0698d6a5b392d6a0e333506bc49133760b3bcf948733"
 dependencies = [
  "atomic-waker",
  "bytes",
@@ -2211,15 +2211,15 @@ dependencies = [
 name = "hyper"
 version = "0.1.0"
 dependencies = [
- "hyper 1.9.0",
+ "hyper 1.10.0",
  "tokio",
 ]
 
 [[package]]
 name = "hyper"
-version = "1.9.0"
+version = "1.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6299f016b246a94207e63da54dbe807655bf9e00044f73ded42c3ac5305fbcca"
+checksum = "eb92f162bf56536459fc83c79b974bb12837acfed43d6bc370a7916d0ae15ecc"
 dependencies = [
  "atomic-waker",
  "bytes",
@@ -2245,7 +2245,7 @@ checksum = "08afdbb5c31130e3034af566421053ab03787c640246a446327f550d11bcb333"
 dependencies = [
  "futures-util",
  "http",
- "hyper 1.9.0",
+ "hyper 1.10.0",
  "hyper-util",
  "rustls",
  "rustls-pki-types",
@@ -2263,7 +2263,7 @@ checksum = "70206fc6890eaca9fde8a0bf71caa2ddfc9fe045ac9e5c70df101a7dbde866e0"
 dependencies = [
  "bytes",
  "http-body-util",
- "hyper 1.9.0",
+ "hyper 1.10.0",
  "hyper-util",
  "native-tls",
  "tokio",
@@ -2284,7 +2284,7 @@ dependencies = [
  "futures-util",
  "http",
  "http-body",
- "hyper 1.9.0",
+ "hyper 1.10.0",
  "ipnet",
  "libc",
  "percent-encoding",
@@ -4052,7 +4052,7 @@ dependencies = [
  "http",
  "http-body",
  "http-body-util",
- "hyper 1.9.0",
+ "hyper 1.10.0",
  "hyper-rustls",
  "hyper-tls",
  "hyper-util",
