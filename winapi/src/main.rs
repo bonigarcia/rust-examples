@@ -2,6 +2,11 @@ use std::ffi::OsStr;
 use std::os::windows::ffi::OsStrExt;
 use std::ptr;
 use winapi::shared::minwindef::LPVOID;
+use winapi::um::sysinfoapi::{GetNativeSystemInfo, SYSTEM_INFO};
+use winapi::um::winnt::{
+    PROCESSOR_ARCHITECTURE_AMD64, PROCESSOR_ARCHITECTURE_ARM, PROCESSOR_ARCHITECTURE_ARM64,
+    PROCESSOR_ARCHITECTURE_IA64, PROCESSOR_ARCHITECTURE_INTEL,
+};
 use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
 fn get_file_version(file_path: &str) -> Option<String> {
@@ -86,6 +91,24 @@ fn get_file_version(file_path: &str) -> Option<String> {
     }
 }
 
+fn get_os_architecture() -> String {
+    unsafe {
+        let mut system_info: SYSTEM_INFO = std::mem::zeroed();
+        GetNativeSystemInfo(&mut system_info);
+
+        match system_info.u.s() {
+            // For x86 and x64 systems, the processor architecture is in `wProcessorArchitecture`
+            si if si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 => "64-bit",
+            si if si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL => "32-bit",
+            si if si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_ARM => "ARM",
+            si if si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_ARM64 => "ARM64",
+            si if si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64 => "Itanium-based",
+            _ => "Unknown",
+        }
+        .to_string()
+    }
+}
+
 fn main() {
     let browser_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
     //let browser_path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
@@ -93,4 +116,7 @@ fn main() {
         Some(version) => println!("Product version: {}", version),
         None => println!("Failed to get version information"),
     }
+
+    let os_arch = get_os_architecture();
+    println!("OS Architecture: {}", os_arch); // e.g., "64-bit"
 }
